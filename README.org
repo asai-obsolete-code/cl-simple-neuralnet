@@ -1,0 +1,45 @@
+* Cl-Simple-Neuralnet
+
+ a simple implementation of multiple-layered neural network.
+
+** Usage
+
+#+begin-src lisp
+
+(defun fn3 (x y z w)
+  (values
+     (sigmoid1 (* x y z w))
+     (sigmoid1 (- (+ x y z) w))))
+
+(defvar *nn*
+	(bp-teach #'fn3 '(4 10 15 2) :iteration 100000))
+
+CL-SIMPLE-NEURALNET> (let ((in (make-input 0.5d0 0.8d0 0.2d0 0.1d0)))
+		       (j-at in (make-output-from-input #'fn3 in) *nn*))
+0.016671963009814696d0
+CL-SIMPLE-NEURALNET> (let ((in (make-input 0.5d0 0.3d0 0.2d0 0.1d0)))
+		       (j-at in (make-output-from-input #'fn3 in) *nn*))
+0.005211269116245283d0
+
+#+end-src
+
+** Installation
+
+asdf-loadable. just require =cl-simple-neuralnet=
+
+** Comments
+
+Part of a project in the university.
+It's just a hack in two weeks or so.
+
+documentation is not yet available because I'm not so into it.
+just read teh source.
+
+** Author
+
+Masataro Asai (guicho2.71828@gmail.com)
+
+** Copyright
+
+Copyright (c) 2012 Masataro Asai (guicho2.71828@gmail.com)
+
