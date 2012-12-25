@@ -4,7 +4,7 @@
 
 ** Usage
 
-#+begin-src lisp
+#+begin_src lisp
 
 (defun fn3 (x y z w)
   (values
@@ -14,18 +14,19 @@
 (defvar *nn*
 	(bp-teach #'fn3 '(4 10 15 2) :iteration 100000))
 
-CL-SIMPLE-NEURALNET> (let ((in (make-input 0.5d0 0.8d0 0.2d0 0.1d0)))
-		       (j-at in (make-output-from-input #'fn3 in) *nn*))
-0.016671963009814696d0
-CL-SIMPLE-NEURALNET> (let ((in (make-input 0.5d0 0.3d0 0.2d0 0.1d0)))
-		       (j-at in (make-output-from-input #'fn3 in) *nn*))
-0.005211269116245283d0
+(let ((in (make-input 0.5d0 0.8d0 0.2d0 0.1d0)))
+  (j-at in (make-output-from-input #'fn3 in) *nn*))
+;; --> 0.016671963009814696d0
 
-#+end-src
+(let ((in (make-input 0.5d0 0.3d0 0.2d0 0.1d0)))
+  (j-at in (make-output-from-input #'fn3 in) *nn*))
+;; --> 0.005211269116245283d0
+
+#+end_src
 
 ** Installation
 
-asdf-loadable. just require =cl-simple-neuralnet=
+asdf-loadable. just =(require :cl-simple-neuralnet)=
 
 ** Comments
 
