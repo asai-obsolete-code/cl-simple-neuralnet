@@ -4,7 +4,7 @@
 
 ** Usage
 
-#+begin_src lisp
+#+BEGIN_SRC lisp
 
 (defun fn3 (x y z w)
   (values
@@ -22,7 +22,7 @@
   (j-at in (make-output-from-input #'fn3 in) *nn*))
 ;; --> 0.005211269116245283d0
 
-#+end_src
+#+END_SRC
 
 ** Installation
 
