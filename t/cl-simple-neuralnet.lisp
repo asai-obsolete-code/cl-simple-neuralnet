@@ -84,16 +84,17 @@ Copyright (c) 2012 Masataro Asai (guicho2.71828@gmail.com)
 		  (format t
 				  "~%~ath bp: average J=~6f dJ=~6f"
 				  (* total print-par) j (when jj (- j jj)))
+		  (when (= (mod total 10) 0)
+			(format t "~%drawing the learned function...")
+			(write-func-to-png
+			 (lambda (x0 y0)
+			   (aref (propagate (make-input x0 y0) nn) 0))
+			 (concatenate 'string name ".png"))
+			(format t "~%drawing the original function...~%")
+			(write-func-to-png fn (concatenate 'string name "-ans.png"))
+			(diag "~%w after leaning:~%~a" (w-of nn)))
 		  (restart-case
 			  (when (= i 1)
-				(diag "~%w after leaning:~%~a" (w-of nn))
-				(format t "~%drawing the learned function...")
-				(write-func-to-png
-				 (lambda (x0 y0)
-				   (aref (propagate (make-input x0 y0) nn) 0))
-				 (concatenate 'string name ".png"))
-				(format t "~%drawing the original function...~%")
-				(write-func-to-png fn (concatenate 'string name "-ans.png"))
 				(error "iteration finished. what do you do?"))
 			(add-iteration (new-i)
 			  :interactive read-new-value

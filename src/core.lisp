@@ -137,8 +137,9 @@
 
 @export
 (defun hidden-δ (out w δ-1)
-  ;; out :: 一つ前の層の出力
-  ;; δ-1 :: 一つ次の層の誤差項
+  ;; out :: 一つ前の層の出力    1.0の要素はない
+  ;; δ-1 :: 一つ次の層の誤差項. 1.0の要素はない（誤差0だから)
+  ;; δ   :: 一つ前の層の誤差項. 1.0の要素はない（誤差0だから)
   ;; (assert (= (array-dimension w 1) (length δ-1)))
   ;; (assert (= (1- (array-dimension w 0)) (length out))) ;; つねに1のノードがあるため
   (iter 
