@@ -39,6 +39,9 @@
 (setf (symbol-function 'sigmoid1) (sigmoid 0.5d0))
 (export '(sigmoid1))
 
+(defun sigmoid-inv1 (y)
+  (dlog (d/ y (d- y 1))))
+
 (defun randomize (ary limit)
   (iter (for i from 0 below (array-total-size ary))
 		(setf (row-major-aref ary i)
@@ -219,11 +222,11 @@ FN : function
 utility function which apply its arguments to FN and returns formatted
 output for BP-TEACH. all values should be of type =double-float=."
 (defun make-output (fn &rest args)
-  (multiple-value-list (apply fn args)))
+  (mapcar #'sigmoid1 (multiple-value-list (apply fn args))))
 
 @export
 (defun make-output-from-input (fn input)
-  (multiple-value-list (apply fn (coerce input 'list))))
+  (apply #'make-output fn (coerce input 'list)))
 
 
 @export

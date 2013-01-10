@@ -33,6 +33,10 @@ Copyright (c) 2012 Masataro Asai (guicho2.71828@gmail.com)
   @type *desired-type* y
   (d* (dsin (d* pi x)) (dsin (d* pi y))))
 
+(defun fn3 (x y)
+  @type *desired-type* x
+  @type *desired-type* y
+  (d* 0.5d0 (d+ x y)))
 
 (defun around-p (x center width)
   (< (abs (- x center)) width))
