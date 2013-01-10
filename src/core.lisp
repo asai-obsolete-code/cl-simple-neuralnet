@@ -19,9 +19,10 @@
 
 ;; (declaim (optimize (debug 3)))
 
-(declaim (optimize (debug 3) (space 0) (safety 3) (speed 0)))
+(declaim (optimize (debug 0) (space 0) (safety 0) (speed 3)))
 
 @export
+@doc "as the name says."
 (defparameter *initial-randomization-weight-range* 0.5d0)
 
 @export
@@ -124,7 +125,7 @@
   (with-slots (w nodes) nn ;; 数が重要！
 	(iter (with len = (length nodes)) ;; 層の数3
 		  (with ys = (make-array len)) ;; 出力の数も3
-		  (assert (= (1- (length nodes)) (length w)))
+		  ;; (assert (= (1- (length nodes)) (length w)))
 		  (for stimula previous output initially input)
 		  (for w-layer in-vector w with-index n) ;; 重みの数は2段だけ
 		  (for output = (layer-output (layer-input stimula w-layer)))
@@ -157,9 +158,9 @@
 	;; (assert (= (1- (array-dimension w 0)) (length δ)))
 	(for oj in-vector out with-index j)
 	(setf (aref δ j)
-		  (d* (coerce (iter 
-						(for δ-1k in-vector δ-1 with-index k)
-						(summing (d* (aref w j k) δ-1k))) '*desired-type*)
+		  (d* (iter 
+				(for δ-1k in-vector δ-1 with-index k)
+				(summing (d* (aref w j k) δ-1k)))
 			  oj (d- 1.0d0 oj)))
 	(finally (return δ))))
 
@@ -197,14 +198,14 @@
 	  (for δn   in-vector δ from 1);; δの数は 3
 	  (for wn   in-vector w from 0);; 重みの数は2
 	  (for on-1 in-vector o from 0);; 出力の数は3 
-	  (assert (= (1+ (length w)) (length o) (length δ)))
+	  ;; (assert (= (1+ (length w)) (length o) (length δ)))
 	  (for (im jm) = (array-dimensions wn))
 	  ;; (break "~@{~a ~}" (length w) (length o) (length δ))
 	  ;; (break "~@{~a ~}" im jm (array-dimensions wn) (length on-1) (length δn))
-	  (assert (= (1- im) (length on-1))
-			  nil "~@{~a ~}" '(= im (length on-1)) im (length on-1))
-	  (assert (= jm (length δn))
-			  nil "~@{~a ~}" '(= jm (length δn)) jm (length δn))
+	  ;; (assert (= (1- im) (length on-1))
+	  ;; 		  nil "~@{~a ~}" '(= im (length on-1)) im (length on-1))
+	  ;; (assert (= jm (length δn))
+	  ;; 		  nil "~@{~a ~}" '(= jm (length δn)) jm (length δn))
 	  (iter
 		(for i below (1- im))
 		(iter
@@ -236,6 +237,9 @@ output for BP-TEACH. all values should be of type =double-float=."
 (defun make-output-from-input (fn input)
   (apply #'make-output fn (coerce input 'list)))
 
+(defun read-new-value ()
+  (format t "Enter a new value: ")
+  (multiple-value-list (eval (read))))
 
 @export
 @doc "
@@ -253,7 +257,7 @@ NN : an instance of =neural-network=
 
 let I = [0.0d0,1.0d0] .
 function FN should accept n =double-float= arguments within I
-and is expected to return m =double-float= arguments values.
+and is expected to return m =double-float= values also within I.
 n should match the first =fixnum= in the NODES , and m should
 match the last =fixnum= in the NODES.
 
@@ -264,6 +268,11 @@ conduct further teaching on NN.
 
 ITERATION determines iteration number of
  back-propagation algorhithm, defaulted to 10000.
+
+restarts:
+
++ /Restart/ add-iteration (new-i)
+
 "
 (defun bp-teach (fn nodes
 				 &key
@@ -272,14 +281,32 @@ ITERATION determines iteration number of
   (let ((nn (or nn
 				(make-instance
 				 'neural-network
-				 :nodes (coerce nodes 'vector)))))
+				 :nodes (coerce nodes 'vector))))
+		(dim (car nodes)))
 	(print nn)
-	(iter (repeat iteration)
-		  (with dim = (car nodes))
-		  (with input = (make-array dim :element-type '*desired-type*))
-		  (iter (for xi in-vector input with-index i)
-				(setf (aref input i) (random 1.0d0)))
-		  (for z0 = (make-output-from-input fn input))
-		  (back-propagate input z0 nn))
-	nn))
+	(iter 
+	  (summing iteration into total)
+	  (iter (repeat iteration)
+			(with input = (make-array dim :element-type '*desired-type*))
+			(iter (for xi in-vector input with-index i)
+				  (setf (aref input i) (drandom 1.0d0)))
+			(for z0 = (make-output-from-input fn input))
+			(back-propagate input z0 nn))
+	  (for j =
+		   (/ (iter (repeat 100)
+					(with input = (make-array dim :element-type
+											  '*desired-type*))
+					(iter (for xi in-vector input with-index i)
+						  (setf (aref input i) (drandom 1.0d0)))
+					(for z0 = (make-output-from-input fn input))
+					(summing (j-at input z0 nn)))
+			  100))
+	  (format t "~%~ath bp: average J=~6f" total j)
+	  (restart-case
+		  (error "iteration finished. what do you do?")
+		(add-iteration (new-i)
+		  :interactive read-new-value
+		  (setf iteration new-i))
+		(finish-learning ()
+		  (return nn))))))
 

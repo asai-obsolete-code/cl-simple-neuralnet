@@ -1,0 +1,521 @@
+#+TITLE: The CL-SIMPLE-NEURALNET.CORE package
+#+AUTHOR: CLOD
+#+EMAIL: your@email.here
+#+LINK: hs http://www.lispworks.com/reference/HyperSpec//%s
+#+STARTUP: showall
+#+OPTIONS: toc:2 H:3 @:t tags:nil
+
+# link target 2: <<cl-simple-neuralnet.core>>
+# link target: <<package cl-simple-neuralnet.core>>
+
+
+* Internal Package: =cl-simple-neuralnet.core=                           :package:
+
+- Uses:
+    [[package common-lisp][common-lisp]], [[package iterate][iterate]], [[package
+    cl-annot][cl-annot]], [[package cl-annot.doc][cl-annot.doc]], [[package cl
+    annot.class][cl-annot.class]], [[package cl-simple-neuralnet.utilities][cl
+    simple-neuralnet.utilities]]
+- Used by:
+    [[package cl-simple-neuralnet-test][cl-simple-neuralnet-test]], [[package
+    letter-recognition][letter-recognition]]
+
+
+** Description
+
+Not documented.
+
+
+** External Symbols
+
+
+
+
+*** External Classes
+
+-----
+
+# link target 2: <<neural-network>>
+# link target: <<class neural-network>>
+
+
+**** Inherited Class: =neural-network=                                        :class:
+
+
+***** Inheritance
+
+- Parent classes:
+    [[class standard-object][standard-object]]
+- Precedence list:
+    [[class neural-network][neural-network]], [[class standard-object][standard
+    object]], [[class slot-object][slot-object]], [[class t][t]]
+- Direct subclasses:
+    None.
+
+
+***** Description
+
+Not documented.
+
+
+***** Direct Slots
+
+# link target 2: <<nodes>>
+# link target: <<slot nodes>>
+
+
+****** Slot: =nodes=                                                             :slot:
+
+- Value type: =array=
+- Initial value: =#(2 10 1)=
+- Initargs: nodes
+- Allocation: instance
+
+
+******* Accessors
+
+-----
+
+# link target 2: <<nodes-of>>
+# link target: <<slot-accessor nodes-of>>
+
+
+******** Inherited Slot Accessor: =nodes-of=                              :reader:writer:
+
+
+********* Syntax
+
+#+BEGIN_SRC lisp
+(nodes-of object)
+#+END_SRC
+
+
+********* Methods
+
+- (=nodes-of= (neural-network [[class neural-network][=neural-network=]]))
+
+
+
+
+
+# link target 2: <<w>>
+# link target: <<slot w>>
+
+
+****** Slot: =w=                                                                 :slot:
+
+- Value type: =array=
+- Initial value: =NIL=
+- Initargs: none
+- Allocation: instance
+
+
+******* Accessors
+
+-----
+
+# link target 2: <<weight-of>>
+# link target: <<slot-accessor weight-of>>
+
+
+******** Inherited Slot Accessor: =weight-of=                             :reader:writer:
+
+
+********* Syntax
+
+#+BEGIN_SRC lisp
+(weight-of object)
+#+END_SRC
+
+
+********* Methods
+
+- (=weight-of= (neural-network [[class neural-network][=neural-network=]]))
+
+
+
+-----
+
+# link target 2: <<w-of>>
+# link target: <<slot-accessor w-of>>
+
+
+******** Inherited Slot Accessor: =w-of=                                  :reader:writer:
+
+
+********* Syntax
+
+#+BEGIN_SRC lisp
+(w-of object)
+#+END_SRC
+
+
+********* Methods
+
+- (=w-of= (neural-network [[class neural-network][=neural-network=]]))
+
+
+
+
+
+
+
+
+
+
+*** External Global Variables
+
+-----
+
+# link target 2: <<*initial-randomization-weight-range*>>
+# link target: <<variable *initial-randomization-weight-range*>>
+
+
+**** Inherited Variable: =*initial-randomization-weight-range*=            :variable:
+
+
+***** Value
+
+: 0.5d0
+
+Type: =double-float=
+
+
+***** Description
+
+as the name says.
+
+
+
+-----
+
+# link target 2: <<..2b..η..2b..>>
+# link target: <<variable ..2b..η..2b..>>
+
+
+**** Inherited Variable: =+η+=                                             :variable:
+
+
+***** Value
+
+: 0.08d0
+
+Type: =double-float=
+
+
+***** Description
+
+the parameter for steepest descent method.
+
+
+
+
+
+*** External Functions
+
+-----
+
+# link target 2: <<back-propagate>>
+# link target: <<function back-propagate>>
+**** Inherited Function: =bp-teach= 				   :function:
+
+
+***** Syntax
+
+#+BEGIN_SRC lisp
+(bp-teach)
+#+END_SRC
+
+***** Description
+
+
+bp-teach (fn, nodes, &key iteration, nn) -> nn
+
+FN : the target function. ( input-arguments* -> output-arguments* )
+
+ITERATION : a =fixnum=
+
+NODES : ({ number-of-nodes-in-layer }*)
+
+NUMBER-OF-NODES-IN-LAYER : a =fixnum=
+
+NN : an instance of =neural-network=
+
+let I = [0.0d0,1.0d0] .
+function FN should accept n =double-float= arguments within I
+and is expected to return m =double-float= values also within I.
+n should match the first =fixnum= in the NODES , and m should
+match the last =fixnum= in the NODES.
+
+if NN is unspecified, NODES argument is used to create 
+a new instance of =neural-network=
+otherwise, NODES will be ignored and it will
+conduct further teaching on NN.
+
+ITERATION determines iteration number of
+ back-propagation algorhithm, defaulted to 10000.
+
+restarts:
+
++ /Restart/ add-iteration (new-i)
+
+
+
+
+-----
+
+# link target 2: <<generate-all-δ>>
+# link target: <<function generate-all-δ>>
+
+**** Inherited Function: =j-at= 				   :function:
+
+
+***** Syntax
+
+#+BEGIN_SRC lisp
+(j-at)
+#+END_SRC
+
+
+***** Description
+
+Not documented.
+
+
+
+-----
+
+# link target 2: <<layer-input>>
+# link target: <<function layer-input>>
+
+**** Inherited Function: =make-input= 				   :function:
+
+
+***** Syntax
+
+#+BEGIN_SRC lisp
+(make-input)
+#+END_SRC
+
+
+***** Description
+
+a utility function which creates correct input for BP-TEACH.
+all values should be of type =double-float=
+
+
+
+-----
+
+# link target 2: <<make-output>>
+# link target: <<function make-output>>
+
+**** Inherited Function: =make-output= 				   :function:
+
+
+***** Syntax
+
+#+BEGIN_SRC lisp
+(make-output)
+#+END_SRC
+
+
+***** Description
+
+
+FN : function
+
+utility function which apply its arguments to FN and returns formatted
+output for BP-TEACH. all values should be of type =double-float=.
+
+
+
+-----
+
+# link target 2: <<make-output-from-input>>
+# link target: <<function make-output-from-input>>
+
+**** Inherited Function: =make-output-from-input= 		   :function:
+
+
+***** Syntax
+
+#+BEGIN_SRC lisp
+(make-output-from-input)
+#+END_SRC
+
+
+***** Description
+
+Not documented.
+
+
+
+-----
+
+# link target 2: <<mostout-δ>>
+# link target: <<function mostout-δ>>
+
+**** Inherited Function: =propagate= 				   :function:
+
+
+***** Syntax
+
+#+BEGIN_SRC lisp
+(propagate)
+#+END_SRC
+
+
+***** Description
+
+Not documented.
+
+
+
+-----
+
+# link target 2: <<sigmoid>>
+# link target: <<function sigmoid>>
+
+**** Inherited Function: =sigmoid=                                         :function:
+
+#+BEGIN_SRC lisp
+(sigmoid)
+#+END_SRC
+
+**** Inherited Function: =sigmoid1=                                        :function:
+
+#+BEGIN_SRC lisp
+(sigmoid1)
+#+END_SRC
+
+
+** Index
+
+ [[index B][B]]  [[index C][C]]  [[index G][G]]  [[index H][H]]  [[index J][J]]
+ [[index L][L]]  [[index M][M]]  [[index N][N]]  [[index P][P]]  [[index R][R]]
+ [[index S][S]]  [[index W][W]]  [[index NONALPHABETIC][NONALPHABETIC]]  
+
+
+*** Nonalphabetic
+
+
+# link target: <<index NONALPHABETIC>>
+- [[variable *initial-randomization-weight-range*][=*initial-randomization
+  weight-range*=]], Variable
+- [[variable ..2b..η..2b..][=+η+=]], Variable
+
+
+
+*** B
+
+
+# link target: <<index B>>
+- [[function back-propagate][=back-propagate=]], Function
+- [[function bp-teach][=bp-teach=]], Function
+
+
+
+*** C
+
+
+# link target: <<index C>>
+- [[function copy-array][=alexandria.0.dev:copy-array=]], Function
+
+
+
+*** G
+
+
+# link target: <<index G>>
+- [[function generate-all-δ][=generate-all-δ=]], Function
+
+
+
+*** H
+
+
+# link target: <<index H>>
+- [[function hidden-δ][=hidden-δ=]], Function
+
+
+
+*** J
+
+
+# link target: <<index J>>
+- [[function j-at][=j-at=]], Function
+
+
+
+*** L
+
+
+# link target: <<index L>>
+- [[function layer-input][=layer-input=]], Function
+- [[function layer-output][=layer-output=]], Function
+- [[function layer-status-after-propagation][=layer-status-after
+  propagation=]], Function
+
+
+
+*** M
+
+
+# link target: <<index M>>
+- [[function make-input][=make-input=]], Function
+- [[function make-output][=make-output=]], Function
+- [[function make-output-from-input][=make-output-from-input=]], Function
+- [[function make-weight][=cl-simple-neuralnet.core::make-weight=]], Function
+- [[function mostout-δ][=mostout-δ=]], Function
+
+
+
+*** N
+
+
+# link target: <<index N>>
+- [[class neural-network][=neural-network=]], Class
+- [[function nodes-of][=nodes-of=]], Function
+
+
+
+*** P
+
+
+# link target: <<index P>>
+- [[function propagate][=propagate=]], Function
+
+
+
+*** R
+
+
+# link target: <<index R>>
+- [[function randomize][=cl-simple-neuralnet.core::randomize=]], Function
+- [[function read-new-value][=cl-simple-neuralnet.core::read-new-value=]],
+  Function
+
+
+
+*** S
+
+
+# link target: <<index S>>
+- [[function sigmoid][=sigmoid=]], Function
+- [[function sigmoid-inv1][=cl-simple-neuralnet.core::sigmoid-inv1=]], Function
+- [[function sigmoid1][=sigmoid1=]], Function
+- [[function sqdiff][=cl-simple-neuralnet.core::sqdiff=]], Function
+
+
+
+*** W
+
+
+# link target: <<index W>>
+- [[function w-of][=w-of=]], Function
+- [[function weight-of][=weight-of=]], Function
+
+
+
+

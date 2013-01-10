@@ -23,10 +23,10 @@ Copyright (c) 2012 Masataro Asai (guicho2.71828@gmail.com)
   (let ((x (d* pi x))
 		(y (d* pi y)))
 	(d+ 0.5d0
-		(d* (dsin (d* 2.0d0 x))
-			(dsin (d* 1.0d0 x))
-			(dsin (d* 2.0d0 y))
-			(dsin (d* 1.0d0 y))))))
+		(d* (dsin (d* 3.0d0 x))
+			(dsin (d* 3.0d0 x))
+			(dsin (d* 3.0d0 y))
+			(dsin (d* 3.0d0 y))))))
 
 (defun japan (x y)
   @type *desired-type* x
@@ -72,7 +72,7 @@ Copyright (c) 2012 Masataro Asai (guicho2.71828@gmail.com)
   (multiple-value-list (eval (read))))
 
 (defun bp-test (fn &optional (name "bp"))
-  (let* ((nn (make-instance 'neural-network :nodes #(2 10 1))))
+  (let* ((nn (make-instance 'neural-network :nodes #(2 25 1))))
 	(diag "~%w before leaning:~%~a"(w-of nn))
 	(iter (with print-par = 10000)
 		  (for total from 0)

@@ -1,0 +1,1122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+<title>The CL-SIMPLE-NEURALNET.CORE package</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="The CL-SIMPLE-NEURALNET.CORE package"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2013-01-11T05:00+0900"/>
+<meta name="author" content="CLOD"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  html { font-family: Times, serif; font-size: 12pt; }
+  .title  { text-align: center; }
+  .todo   { color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #add8e6; font-weight:normal }
+  .target { }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
+  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
+  .center {margin-left:auto; margin-right:auto; text-align:center;}
+  p.verse { margin-left: 3% }
+  pre {
+	border: 1pt solid #AEBDCC;
+	background-color: #F3F5F7;
+	padding: 5pt;
+	font-family: courier, monospace;
+        font-size: 90%;
+        overflow:auto;
+  }
+  table { border-collapse: collapse; }
+  td, th { vertical-align: top;  }
+  th.right  { text-align:center;  }
+  th.left   { text-align:center;   }
+  th.center { text-align:center; }
+  td.right  { text-align:right;  }
+  td.left   { text-align:left;   }
+  td.center { text-align:center; }
+  dt { font-weight: bold; }
+  div.figure { padding: 0.5em; }
+  div.figure p { text-align: center; }
+  div.inlinetask {
+    padding:10px;
+    border:2px solid gray;
+    margin:10px;
+    background: #ffffcc;
+  }
+  textarea { overflow-x: auto; }
+  .linenr { font-size:smaller }
+  .code-highlighted {background-color:#ffff00;}
+  .org-info-js_info-navigation { border-style:none; }
+  #org-info-js_console-label { font-size:10px; font-weight:bold;
+                               white-space:nowrap; }
+  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
+                                 font-weight:bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012  Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">The CL-SIMPLE-NEURALNET.CORE package</h1>
+
+<p><a name="cl-simple-neuralnet.core" id="cl-simple-neuralnet.core"></a>
+<a name="package-cl-simple-neuralnet.core" id="package-cl-simple-neuralnet.core"></a>
+</p>
+
+
+<div id="table-of-contents">
+<h2>目次</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 Internal Package: <code>cl-simple-neuralnet.core</code></a>
+<ul>
+<li><a href="#sec-1-1">1.1 Description</a></li>
+<li><a href="#sec-1-2">1.2 External Symbols</a></li>
+<li><a href="#sec-1-3">1.3 Index</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Internal Package: <code>cl-simple-neuralnet.core</code></h2>
+<div class="outline-text-2" id="text-1">
+
+
+<ul>
+<li>Uses:
+    <a href="#package-common-lisp">common-lisp</a>, <a href="#package-iterate">iterate</a>, <a href="#package-cl-annot">cl-annot</a>, <a href="#package-cl-annot.doc">cl-annot.doc</a>, <a href="#package-cl-annot.class">cl-annot.class</a>, <a href="#package-cl-simple-neuralnet.utilities">cl simple-neuralnet.utilities</a>
+</li>
+<li>Used by:
+    <a href="#package-cl-simple-neuralnet-test">cl-simple-neuralnet-test</a>, <a href="#package-letter-recognition">letter-recognition</a>
+</li>
+</ul>
+
+
+
+
+</div>
+
+<div id="outline-container-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> Description</h3>
+<div class="outline-text-3" id="text-1-1">
+
+
+<p>
+Not documented.
+</p>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> External Symbols</h3>
+<div class="outline-text-3" id="text-1-2">
+
+
+
+
+
+
+</div>
+
+<div id="outline-container-1-2-1" class="outline-4">
+<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> External Classes</h4>
+<div class="outline-text-4" id="text-1-2-1">
+
+
+
+<hr/>
+
+<p>
+<a name="neural-network" id="neural-network"></a>
+<a name="class-neural-network" id="class-neural-network"></a>
+</p>
+
+<ul>
+<li id="sec-1-2-1-1">Inherited Class: <code>neural-network</code><br/>
+
+
+<ul>
+<li id="sec-1-2-1-1-1">Inheritance<br/>
+
+<ul>
+<li>Parent classes:
+    <a href="#class-standard-object">standard-object</a>
+</li>
+<li>Precedence list:
+    <a href="#class-neural-network">neural-network</a>, <a href="#class-standard-object">standard object</a>, <a href="#class-slot-object">slot-object</a>, <a href="#class-t">t</a>
+</li>
+<li>Direct subclasses:
+    None.
+</li>
+</ul>
+
+
+
+</li>
+</ul>
+<ul>
+<li id="sec-1-2-1-1-2">Description<br/>
+
+<p>
+Not documented.
+</p>
+
+</li>
+</ul>
+<ul>
+<li id="sec-1-2-1-1-3">Direct Slots<br/>
+
+<p>
+<a name="nodes" id="nodes"></a>
+<a name="slot-nodes" id="slot-nodes"></a>
+</p>
+
+<ul>
+<li id="sec-1-2-1-1-3-1">Slot: <code>nodes</code><br/>
+
+<ul>
+<li>Value type: <code>array</code>
+</li>
+<li>Initial value: <code>#(2 10 1)</code>
+</li>
+<li>Initargs: nodes
+</li>
+<li>Allocation: instance
+</li>
+</ul>
+
+
+
+<ul>
+<li id="sec-1-2-1-1-3-1-1">Accessors<br/>
+
+
+<hr/>
+
+<p>
+<a name="nodes-of" id="nodes-of"></a>
+<a name="slot-accessor-nodes-of" id="slot-accessor-nodes-of"></a>
+</p>
+
+<ul>
+<li id="sec-1-2-1-1-3-1-1-1">Inherited Slot Accessor: <code>nodes-of</code><br/>
+
+
+<ul>
+<li id="sec-1-2-1-1-3-1-1-1-1">Syntax<br/>
+
+
+
+
+<pre class="src src-lisp">(nodes-of object)
+</pre>
+
+
+
+</li>
+</ul>
+<ul>
+<li id="sec-1-2-1-1-3-1-1-1-2">Methods<br/>
+
+<ul>
+<li>(<code>nodes-of</code> (neural-network <a href="#class-neural-network"><code>neural-network</code></a>))
+</li>
+</ul>
+
+
+
+
+
+
+<p>
+<a name="w" id="w"></a>
+<a name="slot-w" id="slot-w"></a>
+</p>
+
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li id="sec-1-2-1-1-3-2">Slot: <code>w</code><br/>
+
+<ul>
+<li>Value type: <code>array</code>
+</li>
+<li>Initial value: <code>NIL</code>
+</li>
+<li>Initargs: none
+</li>
+<li>Allocation: instance
+</li>
+</ul>
+
+
+
+<ul>
+<li id="sec-1-2-1-1-3-2-1">Accessors<br/>
+
+
+<hr/>
+
+<p>
+<a name="weight-of" id="weight-of"></a>
+<a name="slot-accessor-weight-of" id="slot-accessor-weight-of"></a>
+</p>
+
+<ul>
+<li id="sec-1-2-1-1-3-2-1-1">Inherited Slot Accessor: <code>weight-of</code><br/>
+
+
+<ul>
+<li id="sec-1-2-1-1-3-2-1-1-1">Syntax<br/>
+
+
+
+
+<pre class="src src-lisp">(weight-of object)
+</pre>
+
+
+
+</li>
+</ul>
+<ul>
+<li id="sec-1-2-1-1-3-2-1-1-2">Methods<br/>
+
+<ul>
+<li>(<code>weight-of</code> (neural-network <a href="#class-neural-network"><code>neural-network</code></a>))
+</li>
+</ul>
+
+
+
+
+
+<hr/>
+
+<p>
+<a name="w-of" id="w-of"></a>
+<a name="slot-accessor-w-of" id="slot-accessor-w-of"></a>
+</p>
+
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li id="sec-1-2-1-1-3-2-1-2">Inherited Slot Accessor: <code>w-of</code><br/>
+
+
+<ul>
+<li id="sec-1-2-1-1-3-2-1-2-1">Syntax<br/>
+
+
+
+
+<pre class="src src-lisp">(w-of object)
+</pre>
+
+
+
+</li>
+</ul>
+<ul>
+<li id="sec-1-2-1-1-3-2-1-2-2">Methods<br/>
+
+<ul>
+<li>(<code>w-of</code> (neural-network <a href="#class-neural-network"><code>neural-network</code></a>))
+</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+
+</div>
+
+<div id="outline-container-1-2-2" class="outline-4">
+<h4 id="sec-1-2-2"><span class="section-number-4">1.2.2</span> External Global Variables</h4>
+<div class="outline-text-4" id="text-1-2-2">
+
+
+
+<hr/>
+
+<p>
+<a name="initial-randomization-weight-range" id="initial-randomization-weight-range"></a>
+<a name="variable-initial-randomization-weight-range" id="variable-initial-randomization-weight-range"></a>
+</p>
+
+<ul>
+<li id="sec-1-2-2-1">Inherited Variable: <code>*initial-randomization-weight-range*</code><br/>
+
+
+<ul>
+<li id="sec-1-2-2-1-1">Value<br/>
+
+<pre class="example">
+0.5d0
+</pre>
+
+
+<p>
+Type: <code>double-float</code>
+</p>
+
+</li>
+</ul>
+<ul>
+<li id="sec-1-2-2-1-2">Description<br/>
+
+<p>
+as the name says.
+</p>
+
+
+
+<hr/>
+
+<p>
+<a name="..2b..-..2b.." id="..2b..-..2b.."></a>
+<a name="variable-..2b..-..2b.." id="variable-..2b..-..2b.."></a>
+</p>
+
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li id="sec-1-2-2-2">Inherited Variable: <code>+η+</code><br/>
+
+
+<ul>
+<li id="sec-1-2-2-2-1">Value<br/>
+
+<pre class="example">
+0.08d0
+</pre>
+
+
+<p>
+Type: <code>double-float</code>
+</p>
+
+</li>
+</ul>
+<ul>
+<li id="sec-1-2-2-2-2">Description<br/>
+
+<p>
+the parameter for steepest descent method.
+</p>
+
+
+
+
+</li>
+</ul>
+</li>
+</ul>
+</div>
+
+</div>
+
+<div id="outline-container-1-2-3" class="outline-4">
+<h4 id="sec-1-2-3"><span class="section-number-4">1.2.3</span> External Functions</h4>
+<div class="outline-text-4" id="text-1-2-3">
+
+
+
+<hr/>
+
+<p>
+<a name="back-propagate" id="back-propagate"></a>
+</p><ul>
+<li id="sec-1-2-3-1"><a name="function-back-propagate" id="function-back-propagate"></a>Inherited Function: <code>bp-teach</code><br/>
+
+
+<ul>
+<li id="sec-1-2-3-1-1">Syntax<br/>
+
+
+
+
+<pre class="src src-lisp">(bp-teach)
+</pre>
+
+
+</li>
+</ul>
+<ul>
+<li id="sec-1-2-3-1-2">Description<br/>
+
+
+<p>
+bp-teach (fn, nodes, &amp;key iteration, nn) -&gt; nn
+</p>
+<p>
+FN : the target function. ( input-arguments* -&gt; output-arguments* )
+</p>
+<p>
+ITERATION : a <code>fixnum</code>
+</p>
+<p>
+NODES : ({ number-of-nodes-in-layer }*)
+</p>
+<p>
+NUMBER-OF-NODES-IN-LAYER : a <code>fixnum</code>
+</p>
+<p>
+NN : an instance of <code>neural-network</code>
+</p>
+<p>
+let I = [0.0d0,1.0d0] .
+function FN should accept n <code>double-float</code> arguments within I
+and is expected to return m <code>double-float</code> values also within I.
+n should match the first <code>fixnum</code> in the NODES , and m should
+match the last <code>fixnum</code> in the NODES.
+</p>
+<p>
+if NN is unspecified, NODES argument is used to create 
+a new instance of <code>neural-network</code>
+otherwise, NODES will be ignored and it will
+conduct further teaching on NN.
+</p>
+<p>
+ITERATION determines iteration number of
+ back-propagation algorhithm, defaulted to 10000.
+</p>
+<p>
+restarts:
+</p>
+<ul>
+<li><i>Restart</i> add-iteration (new-i)
+</li>
+</ul>
+
+
+
+
+
+
+<hr/>
+
+<p>
+<a name="generate-all-" id="generate-all-"></a>
+<a name="function-generate-all-" id="function-generate-all-"></a>
+</p>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li id="sec-1-2-3-2">Inherited Function: <code>j-at</code><br/>
+
+
+<ul>
+<li id="sec-1-2-3-2-1">Syntax<br/>
+
+
+
+
+<pre class="src src-lisp">(j-at)
+</pre>
+
+
+
+</li>
+</ul>
+<ul>
+<li id="sec-1-2-3-2-2">Description<br/>
+
+<p>
+Not documented.
+</p>
+
+
+
+<hr/>
+
+<p>
+<a name="layer-input" id="layer-input"></a>
+<a name="function-layer-input" id="function-layer-input"></a>
+</p>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li id="sec-1-2-3-3">Inherited Function: <code>make-input</code><br/>
+
+
+<ul>
+<li id="sec-1-2-3-3-1">Syntax<br/>
+
+
+
+
+<pre class="src src-lisp">(make-input)
+</pre>
+
+
+
+</li>
+</ul>
+<ul>
+<li id="sec-1-2-3-3-2">Description<br/>
+
+<p>
+a utility function which creates correct input for BP-TEACH.
+all values should be of type <code>double-float</code>
+</p>
+
+
+
+<hr/>
+
+<p>
+<a name="make-output" id="make-output"></a>
+<a name="function-make-output" id="function-make-output"></a>
+</p>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li id="sec-1-2-3-4">Inherited Function: <code>make-output</code><br/>
+
+
+<ul>
+<li id="sec-1-2-3-4-1">Syntax<br/>
+
+
+
+
+<pre class="src src-lisp">(make-output)
+</pre>
+
+
+
+</li>
+</ul>
+<ul>
+<li id="sec-1-2-3-4-2">Description<br/>
+
+
+<p>
+FN : function
+</p>
+<p>
+utility function which apply its arguments to FN and returns formatted
+output for BP-TEACH. all values should be of type <code>double-float</code>.
+</p>
+
+
+
+<hr/>
+
+<p>
+<a name="make-output-from-input" id="make-output-from-input"></a>
+<a name="function-make-output-from-input" id="function-make-output-from-input"></a>
+</p>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li id="sec-1-2-3-5">Inherited Function: <code>make-output-from-input</code><br/>
+
+
+<ul>
+<li id="sec-1-2-3-5-1">Syntax<br/>
+
+
+
+
+<pre class="src src-lisp">(make-output-from-input)
+</pre>
+
+
+
+</li>
+</ul>
+<ul>
+<li id="sec-1-2-3-5-2">Description<br/>
+
+<p>
+Not documented.
+</p>
+
+
+
+<hr/>
+
+<p>
+<a name="mostout-" id="mostout-"></a>
+<a name="function-mostout-" id="function-mostout-"></a>
+</p>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li id="sec-1-2-3-6">Inherited Function: <code>propagate</code><br/>
+
+
+<ul>
+<li id="sec-1-2-3-6-1">Syntax<br/>
+
+
+
+
+<pre class="src src-lisp">(propagate)
+</pre>
+
+
+
+</li>
+</ul>
+<ul>
+<li id="sec-1-2-3-6-2">Description<br/>
+
+<p>
+Not documented.
+</p>
+
+
+
+<hr/>
+
+<p>
+<a name="sigmoid" id="sigmoid"></a>
+<a name="function-sigmoid" id="function-sigmoid"></a>
+</p>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li id="sec-1-2-3-7">Inherited Function: <code>sigmoid</code><br/>
+
+
+
+
+<pre class="src src-lisp">(sigmoid)
+</pre>
+
+
+</li>
+</ul>
+<ul>
+<li id="sec-1-2-3-8">Inherited Function: <code>sigmoid1</code><br/>
+
+
+
+
+<pre class="src src-lisp">(sigmoid1)
+</pre>
+
+
+
+</li>
+</ul>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> Index</h3>
+<div class="outline-text-3" id="text-1-3">
+
+
+<p>
+ <a href="#index-B">B</a>  <a href="#index-C">C</a>  <a href="#index-G">G</a>  <a href="#index-H">H</a>  <a href="#index-J">J</a>
+ <a href="#index-L">L</a>  <a href="#index-M">M</a>  <a href="#index-N">N</a>  <a href="#index-P">P</a>  <a href="#index-R">R</a>
+ <a href="#index-S">S</a>  <a href="#index-W">W</a>  <a href="#index-NONALPHABETIC">NONALPHABETIC</a>  
+</p>
+
+
+</div>
+
+<div id="outline-container-1-3-1" class="outline-4">
+<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> Nonalphabetic</h4>
+<div class="outline-text-4" id="text-1-3-1">
+
+
+
+<p>
+<a name="index-NONALPHABETIC" id="index-NONALPHABETIC"></a>
+</p><ul>
+<li><a href="#variable-initial-randomization-weight-range"><code>*initial-randomization weight-range*</code></a>, Variable
+</li>
+<li><a href="#variable-..2b..-..2b.."><code>+η+</code></a>, Variable
+</li>
+</ul>
+
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-2" class="outline-4">
+<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> B</h4>
+<div class="outline-text-4" id="text-1-3-2">
+
+
+
+<p>
+<a name="index-B" id="index-B"></a>
+</p><ul>
+<li><a href="#sec-1-2-3-1"><code>back-propagate</code></a>, Function
+</li>
+<li><a href="#function-bp-teach"><code>bp-teach</code></a>, Function
+</li>
+</ul>
+
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-3" class="outline-4">
+<h4 id="sec-1-3-3"><span class="section-number-4">1.3.3</span> C</h4>
+<div class="outline-text-4" id="text-1-3-3">
+
+
+
+<p>
+<a name="index-C" id="index-C"></a>
+</p><ul>
+<li><a href="#function-copy-array"><code>alexandria.0.dev:copy-array</code></a>, Function
+</li>
+</ul>
+
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-4" class="outline-4">
+<h4 id="sec-1-3-4"><span class="section-number-4">1.3.4</span> G</h4>
+<div class="outline-text-4" id="text-1-3-4">
+
+
+
+<p>
+<a name="index-G" id="index-G"></a>
+</p><ul>
+<li><a href="#function-generate-all-"><code>generate-all-δ</code></a>, Function
+</li>
+</ul>
+
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-5" class="outline-4">
+<h4 id="sec-1-3-5"><span class="section-number-4">1.3.5</span> H</h4>
+<div class="outline-text-4" id="text-1-3-5">
+
+
+
+<p>
+<a name="index-H" id="index-H"></a>
+</p><ul>
+<li><a href="#function-hidden-"><code>hidden-δ</code></a>, Function
+</li>
+</ul>
+
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-6" class="outline-4">
+<h4 id="sec-1-3-6"><span class="section-number-4">1.3.6</span> J</h4>
+<div class="outline-text-4" id="text-1-3-6">
+
+
+
+<p>
+<a name="index-J" id="index-J"></a>
+</p><ul>
+<li><a href="#function-j-at"><code>j-at</code></a>, Function
+</li>
+</ul>
+
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-7" class="outline-4">
+<h4 id="sec-1-3-7"><span class="section-number-4">1.3.7</span> L</h4>
+<div class="outline-text-4" id="text-1-3-7">
+
+
+
+<p>
+<a name="index-L" id="index-L"></a>
+</p><ul>
+<li><a href="#function-layer-input"><code>layer-input</code></a>, Function
+</li>
+<li><a href="#function-layer-output"><code>layer-output</code></a>, Function
+</li>
+<li><a href="#function-layer-status-after-propagation"><code>layer-status-after propagation</code></a>, Function
+</li>
+</ul>
+
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-8" class="outline-4">
+<h4 id="sec-1-3-8"><span class="section-number-4">1.3.8</span> M</h4>
+<div class="outline-text-4" id="text-1-3-8">
+
+
+
+<p>
+<a name="index-M" id="index-M"></a>
+</p><ul>
+<li><a href="#function-make-input"><code>make-input</code></a>, Function
+</li>
+<li><a href="#function-make-output"><code>make-output</code></a>, Function
+</li>
+<li><a href="#function-make-output-from-input"><code>make-output-from-input</code></a>, Function
+</li>
+<li><a href="#function-make-weight"><code>cl-simple-neuralnet.core::make-weight</code></a>, Function
+</li>
+<li><a href="#function-mostout-"><code>mostout-δ</code></a>, Function
+</li>
+</ul>
+
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-9" class="outline-4">
+<h4 id="sec-1-3-9"><span class="section-number-4">1.3.9</span> N</h4>
+<div class="outline-text-4" id="text-1-3-9">
+
+
+
+<p>
+<a name="index-N" id="index-N"></a>
+</p><ul>
+<li><a href="#class-neural-network"><code>neural-network</code></a>, Class
+</li>
+<li><a href="#function-nodes-of"><code>nodes-of</code></a>, Function
+</li>
+</ul>
+
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-10" class="outline-4">
+<h4 id="sec-1-3-10"><span class="section-number-4">1.3.10</span> P</h4>
+<div class="outline-text-4" id="text-1-3-10">
+
+
+
+<p>
+<a name="index-P" id="index-P"></a>
+</p><ul>
+<li><a href="#function-propagate"><code>propagate</code></a>, Function
+</li>
+</ul>
+
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-11" class="outline-4">
+<h4 id="sec-1-3-11"><span class="section-number-4">1.3.11</span> R</h4>
+<div class="outline-text-4" id="text-1-3-11">
+
+
+
+<p>
+<a name="index-R" id="index-R"></a>
+</p><ul>
+<li><a href="#function-randomize"><code>cl-simple-neuralnet.core::randomize</code></a>, Function
+</li>
+<li><a href="#function-read-new-value"><code>cl-simple-neuralnet.core::read-new-value</code></a>,
+  Function
+</li>
+</ul>
+
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-12" class="outline-4">
+<h4 id="sec-1-3-12"><span class="section-number-4">1.3.12</span> S</h4>
+<div class="outline-text-4" id="text-1-3-12">
+
+
+
+<p>
+<a name="index-S" id="index-S"></a>
+</p><ul>
+<li><a href="#function-sigmoid"><code>sigmoid</code></a>, Function
+</li>
+<li><a href="#function-sigmoid-inv1"><code>cl-simple-neuralnet.core::sigmoid-inv1</code></a>, Function
+</li>
+<li><a href="#function-sigmoid1"><code>sigmoid1</code></a>, Function
+</li>
+<li><a href="#function-sqdiff"><code>cl-simple-neuralnet.core::sqdiff</code></a>, Function
+</li>
+</ul>
+
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-13" class="outline-4">
+<h4 id="sec-1-3-13"><span class="section-number-4">1.3.13</span> W</h4>
+<div class="outline-text-4" id="text-1-3-13">
+
+
+
+<p>
+<a name="index-W" id="index-W"></a>
+</p><ul>
+<li><a href="#function-w-of"><code>w-of</code></a>, Function
+</li>
+<li><a href="#function-weight-of"><code>weight-of</code></a>, Function
+</li>
+</ul>
+
+
+
+
+
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</body>
+</html>
