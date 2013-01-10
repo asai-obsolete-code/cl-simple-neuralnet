@@ -189,7 +189,7 @@ modified."
 
 @export
 @doc "a utility function which creates correct input for BP-TEACH.
-all values should be of type `double-float'"
+all values should be of type =double-float="
 (defun make-input (&rest args)
   (coerce args '(array *desired-type* 1)))
 
@@ -198,7 +198,7 @@ all values should be of type `double-float'"
 FN : function
 
 utility function which apply its arguments to FN and returns formatted
-output for BP-TEACH. all values should be of type `double-float'."
+output for BP-TEACH. all values should be of type =double-float=."
 (defun make-output (fn &rest args)
   (multiple-value-list (apply fn args)))
 
@@ -218,19 +218,23 @@ output for BP-TEACH."
 bp-teach (fn, nodes, &key iteration, nn) -> nn
 
 FN : the target function. ( input-arguments* -> output-arguments* )
-ITERATION : a `fixnum'
+
+ITERATION : a =fixnum=
+
 NODES : ({ number-of-nodes-in-layer }*)
-NUMBER-OF-NODES-IN-LAYER : a `fixnum'
-NN : an instance of `neural-network'
+
+NUMBER-OF-NODES-IN-LAYER : a =fixnum=
+
+NN : an instance of =neural-network=
 
 let I = [0.0d0,1.0d0] .
-function FN should accept n `double-float' arguments within I
-and is expected to return m `double-float' arguments values.
-n should match the first `fixnum' in the NODES , and m should
-match the last `fixnum' in the NODES.
+function FN should accept n =double-float= arguments within I
+and is expected to return m =double-float= arguments values.
+n should match the first =fixnum= in the NODES , and m should
+match the last =fixnum= in the NODES.
 
 if NN is unspecified, NODES argument is used to create 
-a new instance of `neural-network'
+a new instance of =neural-network=
 otherwise, NODES will be ignored and it will
 conduct further teaching on NN.
 
@@ -254,5 +258,4 @@ ITERATION determines iteration number of
 		  (for z0 = (make-output-from-input fn input))
 		  (back-propagate input z0 nn))
 	nn))
-		  
-		  
+
