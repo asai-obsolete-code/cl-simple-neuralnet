@@ -3,6 +3,7 @@
   Copyright (c) 2012 Masataro Asai (guicho2.71828@gmail.com)
 |#
 
+
 (in-package :cl-user)
 (defpackage cl-simple-neuralnet.core
   (:use :cl
