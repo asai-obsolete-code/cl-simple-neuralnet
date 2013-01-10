@@ -28,6 +28,12 @@ Copyright (c) 2012 Masataro Asai (guicho2.71828@gmail.com)
 			(dsin (d* 2.0d0 y))
 			(dsin (d* 1.0d0 y))))))
 
+(defun japan (x y)
+  @type *desired-type* x
+  @type *desired-type* y
+  (if (< 0.5 (d* (dsin (d* pi x)) (dsin (d* pi y))))
+	  1.0d0 0.0d0))
+
 (defun fn2 (x y)
   @type *desired-type* x
   @type *desired-type* y
@@ -68,9 +74,9 @@ Copyright (c) 2012 Masataro Asai (guicho2.71828@gmail.com)
 (defun bp-test (fn &optional (name "bp"))
   (let* ((nn (make-instance 'neural-network :nodes #(2 10 1))))
 	(diag "~%w before leaning:~%~a"(w-of nn))
-	(iter (with print-par = 130000)
+	(iter (with print-par = 10000)
 		  (for total from 0)
-		  (for i from 3 downto 0)
+		  (for i from 60 downto 0)
 		  (iter (repeat print-par)
 				(for x = (make-input (drandom 1.0d0)
 									 (drandom 1.0d0)))
@@ -81,6 +87,7 @@ Copyright (c) 2012 Masataro Asai (guicho2.71828@gmail.com)
 			   (/ (iter (repeat 100)
 				   (for x = (make-input (drandom 1.0d0)
 										(drandom 1.0d0)))
+				   ;(break "~@{~a~}" x (make-output-from-input fn x))
 				   (summing
 					(j-at x (make-output-from-input fn x) nn)))
 					 100))
@@ -88,7 +95,7 @@ Copyright (c) 2012 Masataro Asai (guicho2.71828@gmail.com)
 		  (format t
 				  "~%~ath bp: average J=~6f dJ=~6f"
 				  (* total print-par) j (when jj (- j jj)))
-		  (when (= (mod total 10) 0)
+		  (when (= (mod total 30) 0)
 			(format t "~%drawing the learned function...")
 			(write-func-to-png
 			 (lambda (x0 y0)

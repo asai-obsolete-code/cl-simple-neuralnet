@@ -19,14 +19,14 @@
 
 ;; (declaim (optimize (debug 3)))
 
-(declaim (optimize (debug 0) (space 0) (safety 0) (speed 3)))
+(declaim (optimize (debug 3) (space 0) (safety 3) (speed 0)))
 
 @export
-(defparameter *initial-randomization-weight-range* 0.1d0)
+(defparameter *initial-randomization-weight-range* 0.5d0)
 
 @export
 @doc "the parameter for steepest descent method."
-(defparameter +η+ 1.00d-2)
+(defparameter +η+ 8.0d-2)
 
 
 @export
@@ -40,7 +40,7 @@
 (export '(sigmoid1))
 
 (defun sigmoid-inv1 (y)
-  (dlog (d/ y (d- y 1))))
+  (dlog (d/ y (d- y 1.0d0))))
 
 (defun randomize (ary limit)
   (iter (for i from 0 below (array-total-size ary))
@@ -84,6 +84,8 @@
 (defun layer-input (l w)
   @type (simple-array *desired-type* 1) l
   @type (simple-array *desired-type* 2) w
+  ;; (assert (= (1- (array-dimension w 0))
+  ;; 			 (length l)))
   (iter 
 	(with n1 = (1- (array-dimension w 0)))
 	(with n2 = (array-dimension w 1))
@@ -119,14 +121,18 @@
 @export
 @doc "入力層以外のノードの出力をすべてあつめて返す。すなわちn=2から"
 (defun layer-status-after-propagation (input nn)
-  (with-slots (w nodes) nn
-	(iter (with len = (length nodes))
-		  (with ys = (make-array len :fill-pointer 0))
+  (with-slots (w nodes) nn ;; 数が重要！
+	(iter (with len = (length nodes)) ;; 層の数3
+		  (with ys = (make-array len)) ;; 出力の数も3
+		  (assert (= (1- (length nodes)) (length w)))
 		  (for stimula previous output initially input)
-		  (for w-layer in-vector w)
+		  (for w-layer in-vector w with-index n) ;; 重みの数は2段だけ
 		  (for output = (layer-output (layer-input stimula w-layer)))
-		  (vector-push output ys)
-		  (finally (return ys)))))
+		  (setf (aref ys n) stimula) ;; 入力層はそのまま出力
+		  (finally 
+		   (setf (aref ys (1- len)) output) ;; 最後の出力
+		   ;(break "~@{~a~}" ys n)
+		   (return ys))))) ;; 出力の数は3
 
 
 @export
@@ -144,35 +150,35 @@
   ;; δ-1 :: 一つ次の層の誤差項. 1.0の要素はない（誤差0だから)
   ;; δ   :: 一つ前の層の誤差項. 1.0の要素はない（誤差0だから)
   ;; (assert (= (array-dimension w 1) (length δ-1)))
-  ;; (assert (= (1- (array-dimension w 0)) (length out))) ;; つねに1のノードがあるため
+  ;; (assert (= (1- (array-dimension w 0)) (length out)))
+  ;; つねに1のノードがあるため
   (iter 
 	(with δ = (make-array (1- (array-dimension w 0))))
 	;; (assert (= (1- (array-dimension w 0)) (length δ)))
 	(for oj in-vector out with-index j)
 	(setf (aref δ j)
-		  (d* (iter 
-				(for δ-1k in-vector δ-1 with-index k)
-				(summing (d* (aref w j k) δ-1k)))
+		  (d* (coerce (iter 
+						(for δ-1k in-vector δ-1 with-index k)
+						(summing (d* (aref w j k) δ-1k))) '*desired-type*)
 			  oj (d- 1.0d0 oj)))
 	(finally (return δ))))
 
 @export
 (defun generate-all-δ (w o z0)
-  ;; o :: すべての出力層, inputは含まず.
-  ;; w :: すべての重み
+  ;; o :: すべての出力層, inputは含まず. 3こ
+  ;; w :: すべての重み 2こ
   ;; z0 :: 一番後の教師信号
   (iter
-	(with δ =
-		  (make-array (length o)))
-	(with mostout =
-		  (mostout-δ (aref o (1- (length o))) z0))
+	(with δ = (make-array (length o)));; δの数は 3
+	(with mostout = (mostout-δ (aref o (1- (length o))) z0))
 	(initially
-	 (setf (aref δ (1- (length o))) mostout))
+	 (setf (aref δ (1- (length o))) mostout)) ;; n=2につっこんだ
 	
-	;; (assert (= (length w) (length o) (length δ)))
-	(for n from (- (length o) 2) downto 0)
-	(for on = (aref o n))
-	(for wn = (aref w (1+ n)))
+	;; (assert (= (1- (length w)) (length o) (length δ)))
+
+	;; n = 1からはじめて下がる
+	(for on in-vector o with-index n from (- (length o) 2) downto 0)
+	(for wn in-vector w downto 0)
 	
 	(for δn-1 previous δn)
 	(for δn
@@ -185,29 +191,31 @@
 (defun back-propagate (x z0 nn)
   (with-slots (w nodes) nn
 	(iter
-	  (with o = (layer-status-after-propagation x nn))
+	  (with o = (layer-status-after-propagation x nn));; 出力の数は3
 	  (with δ = (generate-all-δ w o z0))
 
-	  (for δn   in-vector δ with-index n)
-	  (for wn   in-vector w)
-	  (for on-1 in-vector o)
-
+	  (for δn   in-vector δ from 1);; δの数は 3
+	  (for wn   in-vector w from 0);; 重みの数は2
+	  (for on-1 in-vector o from 0);; 出力の数は3 
+	  (assert (= (1+ (length w)) (length o) (length δ)))
 	  (for (im jm) = (array-dimensions wn))
-	  ;; (assert (= (length w) (length o) (length δ)))
-	  ;; (break "~@{~a ~}" (length w) (length o) (length δ) n)
+	  ;; (break "~@{~a ~}" (length w) (length o) (length δ))
 	  ;; (break "~@{~a ~}" im jm (array-dimensions wn) (length on-1) (length δn))
-	  ;; (assert (= jm (length on-1)) nil "~@{~a ~}" '(= jm (length on-1)) jm (length on-1))
-	  ;; (assert (= jm (length δn)) nil "~@{~a ~}" '(= jm (length δn)) jm (length δn))
+	  (assert (= (1- im) (length on-1))
+			  nil "~@{~a ~}" '(= im (length on-1)) im (length on-1))
+	  (assert (= jm (length δn))
+			  nil "~@{~a ~}" '(= jm (length δn)) jm (length δn))
 	  (iter
 		(for i below (1- im))
 		(iter
 		  (for j below jm)
 		  (incf (aref wn i j)
-				(d* +η+ (aref δn j) (aref on-1 j)))))
+				(d* +η+ (aref δn j) (aref on-1 i)))))
 	  (iter
-		(for j below jm)
-		(incf (aref wn (1- im) j)
-			  (d* +η+ (aref δn j) 1.0d0))))))
+	  	(for j below jm)
+	  	(incf (aref wn (1- im) j)
+	  		  (d* +η+ (aref δn j) 1.0d0)))
+	  )))
 
 @export
 @doc "a utility function which creates correct input for BP-TEACH.
@@ -222,7 +230,7 @@ FN : function
 utility function which apply its arguments to FN and returns formatted
 output for BP-TEACH. all values should be of type =double-float=."
 (defun make-output (fn &rest args)
-  (mapcar #'sigmoid1 (multiple-value-list (apply fn args))))
+  (multiple-value-list (apply fn args)))
 
 @export
 (defun make-output-from-input (fn input)
