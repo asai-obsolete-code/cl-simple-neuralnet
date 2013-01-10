@@ -6,7 +6,7 @@ Copyright (c) 2012 Masataro Asai (guicho2.71828@gmail.com)
 (in-package :cl-user)
 (defpackage cl-simple-neuralnet-test
   (:use :cl
-        :cl-simple-neuralnet
+        :cl-simple-neuralnet.core
 		:cl-simple-neuralnet.utilities
 		:annot
 		:iterate

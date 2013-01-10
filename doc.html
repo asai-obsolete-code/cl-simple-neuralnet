@@ -1,0 +1,989 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+<title>The CL-SIMPLE-NEURALNET package</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="The CL-SIMPLE-NEURALNET package"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2013-01-10T17:16+0900"/>
+<meta name="author" content="CLOD"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  html { font-family: Times, serif; font-size: 12pt; }
+  .title  { text-align: center; }
+  .todo   { color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #add8e6; font-weight:normal }
+  .target { }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
+  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
+  .center {margin-left:auto; margin-right:auto; text-align:center;}
+  p.verse { margin-left: 3% }
+  pre {
+	border: 1pt solid #AEBDCC;
+	background-color: #F3F5F7;
+	padding: 5pt;
+	font-family: courier, monospace;
+        font-size: 90%;
+        overflow:auto;
+  }
+  table { border-collapse: collapse; }
+  td, th { vertical-align: top;  }
+  th.right  { text-align:center;  }
+  th.left   { text-align:center;   }
+  th.center { text-align:center; }
+  td.right  { text-align:right;  }
+  td.left   { text-align:left;   }
+  td.center { text-align:center; }
+  dt { font-weight: bold; }
+  div.figure { padding: 0.5em; }
+  div.figure p { text-align: center; }
+  div.inlinetask {
+    padding:10px;
+    border:2px solid gray;
+    margin:10px;
+    background: #ffffcc;
+  }
+  textarea { overflow-x: auto; }
+  .linenr { font-size:smaller }
+  .code-highlighted {background-color:#ffff00;}
+  .org-info-js_info-navigation { border-style:none; }
+  #org-info-js_console-label { font-size:10px; font-weight:bold;
+                               white-space:nowrap; }
+  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
+                                 font-weight:bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012  Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">The CL-SIMPLE-NEURALNET package</h1>
+
+<p><a name="cl-simple-neuralnet" id="cl-simple-neuralnet"></a>
+<a name="package-cl-simple-neuralnet" id="package-cl-simple-neuralnet"></a>
+</p>
+
+
+<div id="table-of-contents">
+<h2>目次</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 Internal Package: <code>cl-simple-neuralnet</code></a></li>
+<li><a href="#sec-2">2 External Symbols</a>
+<ul>
+<li><a href="#sec-2-1">2.1 Class: <code>neural-network</code></a></li>
+<li><a href="#sec-2-2">2.2 Variable: <code>*initial-randomization-weight-range*</code></a></li>
+<li><a href="#sec-2-3">2.3 Variable: <code>+η+</code></a></li>
+</ul>
+</li>
+<li><a href="#sec-3">3 External Functions</a>
+<ul>
+<li><a href="#sec-3-1">3.1 Function: <code>back-propagate</code></a></li>
+<li><a href="#sec-3-2">3.2 Function: <code>bp-teach</code></a></li>
+<li><a href="#sec-3-3">3.3 Function: <code>j-at</code></a></li>
+<li><a href="#sec-3-4">3.4 Function: <code>make-input</code></a></li>
+<li><a href="#sec-3-5">3.5 Function: <code>make-output</code></a></li>
+<li><a href="#sec-3-6">3.6 Function: <code>make-output-from-input</code></a></li>
+<li><a href="#sec-3-7">3.7 Inherited Function: <code>nodes-of</code></a></li>
+<li><a href="#sec-3-8">3.8 Function: <code>propagate</code></a></li>
+<li><a href="#sec-3-9">3.9 Function: <code>sigmoid</code></a></li>
+<li><a href="#sec-3-10">3.10 Function: <code>sigmoid1</code></a></li>
+<li><a href="#sec-3-11">3.11 Function: <code>w-of</code></a></li>
+<li><a href="#sec-3-12">3.12 Function: <code>weight-of</code></a></li>
+</ul>
+</li>
+<li><a href="#sec-4">4 Colophon</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Internal Package: <code>cl-simple-neuralnet</code></h2>
+<div class="outline-text-2" id="text-1">
+
+
+<ul>
+<li>Uses:
+    <a href="#package-common-lisp">common-lisp</a>, <a href="#package-cl-simple-neuralnet.core">cl simple-neuralnet.core</a>
+</li>
+<li>Used by:
+    None.
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> External Symbols</h2>
+<div class="outline-text-2" id="text-2">
+
+
+</div>
+
+<div id="outline-container-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> Class: <code>neural-network</code></h3>
+<div class="outline-text-3" id="text-2-1">
+
+
+
+<ul>
+<li id="sec-2-1-1">Inheritance<br/>
+
+<ul>
+<li>Parent classes:
+    <a href="#class-standard-object">standard-object</a>
+</li>
+<li>Precedence list:
+    <a href="#class-neural-network">neural-network</a>, <a href="#class-standard-object">standard object</a>, <a href="#class-slot-object">slot-object</a>, <a href="#class-t">t</a>
+</li>
+<li>Direct subclasses:
+    None.
+</li>
+</ul>
+
+
+
+</li>
+</ul>
+<ul>
+<li id="sec-2-1-2">Description<br/>
+
+<p>
+Not documented.
+</p>
+
+</li>
+</ul>
+<ul>
+<li id="sec-2-1-3">Direct Slots<br/>
+
+<p>
+<a name="nodes" id="nodes"></a>
+<a name="slot-nodes" id="slot-nodes"></a>
+</p>
+
+<ul>
+<li id="sec-2-1-3-1">Slot: <code>nodes</code><br/>
+
+<ul>
+<li>Value type: <code>array</code>
+</li>
+<li>Initial value: <code>#(2 10 1)</code>
+</li>
+<li>Initargs: nodes
+</li>
+<li>Allocation: instance
+</li>
+</ul>
+
+
+
+<ul>
+<li id="sec-2-1-3-1-1">Accessors<br/>
+
+<p>
+<a name="nodes-of" id="nodes-of"></a>
+<a name="slot-accessor-nodes-of" id="slot-accessor-nodes-of"></a>
+</p>
+
+<ul>
+<li id="sec-2-1-3-1-1-1">Inherited Slot Accessor: <code>nodes-of</code><br/>
+
+
+<ul>
+<li id="sec-2-1-3-1-1-1-1">Syntax<br/>
+
+
+
+
+<pre class="src src-lisp">(nodes-of object)
+</pre>
+
+
+
+</li>
+</ul>
+<ul>
+<li id="sec-2-1-3-1-1-1-2">Methods<br/>
+
+
+<ul>
+<li id="sec-2-1-3-1-1-1-2-1">Method: Nodes-Of(#&lt;Standard-Class Cl-Simple-Neuralnet.Core:Neural-Network&gt;)<br/>
+
+
+
+
+
+
+
+<p>
+<a name="w" id="w"></a>
+<a name="slot-w" id="slot-w"></a>
+</p>
+
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li id="sec-2-1-3-2">Slot: <code>w</code><br/>
+
+<ul>
+<li>Value type: <code>array</code>
+</li>
+<li>Initial value: <code>NIL</code>
+</li>
+<li>Initargs: none
+</li>
+<li>Allocation: instance
+</li>
+</ul>
+
+
+
+<ul>
+<li id="sec-2-1-3-2-1">Accessors<br/>
+
+<p>
+<a name="weight-of" id="weight-of"></a>
+<a name="slot-accessor-weight-of" id="slot-accessor-weight-of"></a>
+</p>
+
+<ul>
+<li id="sec-2-1-3-2-1-1">Slot Accessor: <code>weight-of</code><br/>
+
+
+<ul>
+<li id="sec-2-1-3-2-1-1-1">Syntax<br/>
+
+
+
+
+<pre class="src src-lisp">(weight-of object)
+</pre>
+
+
+
+</li>
+</ul>
+<ul>
+<li id="sec-2-1-3-2-1-1-2">Methods<br/>
+
+
+<ul>
+<li id="sec-2-1-3-2-1-1-2-1">Method: Weight-Of(#&lt;Standard-Class Cl-Simple-Neuralnet.Core:Neural-Network&gt;)<br/>
+
+
+
+
+
+<p>
+<a name="w-of" id="w-of"></a>
+<a name="slot-accessor-w-of" id="slot-accessor-w-of"></a>
+</p>
+
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li id="sec-2-1-3-2-1-2">Slot Accessor: <code>w-of</code><br/>
+
+
+<ul>
+<li id="sec-2-1-3-2-1-2-1">Syntax<br/>
+
+
+
+
+<pre class="src src-lisp">(w-of object)
+</pre>
+
+
+
+</li>
+</ul>
+<ul>
+<li id="sec-2-1-3-2-1-2-2">Methods<br/>
+
+
+<ul>
+<li id="sec-2-1-3-2-1-2-2-1">Method: W-Of(#&lt;Standard-Class Cl-Simple-Neuralnet.Core:Neural-Network&gt;)<br/>
+
+
+
+
+
+
+
+
+
+
+
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+
+</div>
+
+<div id="outline-container-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> Variable: <code>*initial-randomization-weight-range*</code></h3>
+<div class="outline-text-3" id="text-2-2">
+
+
+
+<ul>
+<li id="sec-2-2-1">Value<br/>
+
+<pre class="example">
+0.1d0
+</pre>
+
+
+<p>
+Type: <code>double-float</code>
+</p>
+
+</li>
+</ul>
+<ul>
+<li id="sec-2-2-2">Description<br/>
+
+<p>
+determines the randomization limit of initial weight value
+of the newtwork. the weight ranges from -0.1 to 0.1 by default.
+</p>
+
+
+<p>
+<a name="..2b..-..2b.." id="..2b..-..2b.."></a>
+<a name="variable-..2b..-..2b.." id="variable-..2b..-..2b.."></a>
+</p>
+</li>
+</ul>
+</div>
+
+</div>
+
+<div id="outline-container-2-3" class="outline-3">
+<h3 id="sec-2-3"><span class="section-number-3">2.3</span> Variable: <code>+η+</code></h3>
+<div class="outline-text-3" id="text-2-3">
+
+
+
+<ul>
+<li id="sec-2-3-1">Value<br/>
+
+<pre class="example">
+0.08d0
+</pre>
+
+
+<p>
+Type: <code>double-float</code>
+</p>
+
+</li>
+</ul>
+<ul>
+<li id="sec-2-3-2">Description<br/>
+
+<p>
+the parameter for steepest descent method. Each iteration in BP
+ algorithm, this parameter works as the factor which slower the speed 
+of learning, therefore contributes to preventing the divergence 
+in lerning.
+</p>
+
+
+
+</li>
+</ul>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> External Functions</h2>
+<div class="outline-text-2" id="text-3">
+
+
+</div>
+
+<div id="outline-container-3-1" class="outline-3">
+<h3 id="sec-3-1"><span class="section-number-3">3.1</span> Function: <code>back-propagate</code></h3>
+<div class="outline-text-3" id="text-3-1">
+
+
+
+<ul>
+<li id="sec-3-1-1">Syntax<br/>
+
+
+
+
+<pre class="src src-lisp">(back-propagate x z0 nn)
+</pre>
+
+
+
+</li>
+</ul>
+<ul>
+<li id="sec-3-1-2">Description<br/>
+
+<p>
+modifies the weights between each nodes of
+neural-network by means of back propagation algorithm. X is the
+imput, Z0 is the teacher signal and NN is the neural-network to be
+modified.
+</p>
+
+
+<p>
+<a name="bp-teach" id="bp-teach"></a>
+<a name="function-bp-teach" id="function-bp-teach"></a>
+</p>
+</li>
+</ul>
+</div>
+
+</div>
+
+<div id="outline-container-3-2" class="outline-3">
+<h3 id="sec-3-2"><span class="section-number-3">3.2</span> Function: <code>bp-teach</code></h3>
+<div class="outline-text-3" id="text-3-2">
+
+
+
+<ul>
+<li id="sec-3-2-1">Syntax<br/>
+
+
+
+
+<pre class="src src-lisp">(bp-teach fn nodes <span style="color: #228b22;">&amp;key</span> (iteration 10000) nn)
+</pre>
+
+
+
+</li>
+</ul>
+<ul>
+<li id="sec-3-2-2">Description<br/>
+
+
+<p>
+bp-teach (fn, nodes, &amp;key iteration, nn) -&gt; nn
+</p>
+<p>
+FN : the target function. ( input-arguments* -&gt; output-arguments* )
+ITERATION : a `fixnum'
+NODES : ({ number-of-nodes-in-layer }*)
+NUMBER-OF-NODES-IN-LAYER : a `fixnum'
+NN : an instance of `neural-network'
+</p>
+<p>
+let I = [0.0d0,1.0d0] .
+function FN should accept n `double-float' arguments within I
+and is expected to return m `double-float' arguments values.
+n should match the first `fixnum' in the NODES , and m should
+match the last `fixnum' in the NODES.
+</p>
+<p>
+if NN is unspecified, NODES argument is used to create 
+a new instance of `neural-network'
+otherwise, NODES will be ignored and it will
+conduct further teaching on NN.
+</p>
+<p>
+ITERATION determines iteration number of
+ back-propagation algorhithm, defaulted to 10000.
+</p>
+
+
+<p>
+<a name="j-at" id="j-at"></a>
+<a name="function-j-at" id="function-j-at"></a>
+</p>
+</li>
+</ul>
+</div>
+
+</div>
+
+<div id="outline-container-3-3" class="outline-3">
+<h3 id="sec-3-3"><span class="section-number-3">3.3</span> Function: <code>j-at</code></h3>
+<div class="outline-text-3" id="text-3-3">
+
+
+
+<ul>
+<li id="sec-3-3-1">Syntax<br/>
+
+
+
+
+<pre class="src src-lisp">(j-at x z0 nn <span style="color: #228b22;">&amp;aux</span> (z? (propagate x nn)))
+</pre>
+
+
+
+</li>
+</ul>
+<ul>
+<li id="sec-3-3-2">Description<br/>
+
+<p>
+Not documented.
+</p>
+
+
+<p>
+<a name="make-input" id="make-input"></a>
+<a name="function-make-input" id="function-make-input"></a>
+</p>
+</li>
+</ul>
+</div>
+
+</div>
+
+<div id="outline-container-3-4" class="outline-3">
+<h3 id="sec-3-4"><span class="section-number-3">3.4</span> Function: <code>make-input</code></h3>
+<div class="outline-text-3" id="text-3-4">
+
+
+
+<ul>
+<li id="sec-3-4-1">Syntax<br/>
+
+
+
+
+<pre class="src src-lisp">(make-input <span style="color: #228b22;">&amp;rest</span> args)
+</pre>
+
+
+
+</li>
+</ul>
+<ul>
+<li id="sec-3-4-2">Description<br/>
+
+<p>
+a utility function which creates correct input for BP-TEACH.
+all values should be of type `double-float'
+</p>
+
+
+<p>
+<a name="make-output" id="make-output"></a>
+<a name="function-make-output" id="function-make-output"></a>
+</p>
+</li>
+</ul>
+</div>
+
+</div>
+
+<div id="outline-container-3-5" class="outline-3">
+<h3 id="sec-3-5"><span class="section-number-3">3.5</span> Function: <code>make-output</code></h3>
+<div class="outline-text-3" id="text-3-5">
+
+
+
+<ul>
+<li id="sec-3-5-1">Syntax<br/>
+
+
+
+
+<pre class="src src-lisp">(make-output fn <span style="color: #228b22;">&amp;rest</span> args)
+</pre>
+
+
+
+</li>
+</ul>
+<ul>
+<li id="sec-3-5-2">Description<br/>
+
+
+<p>
+FN : function
+</p>
+<p>
+utility function which apply its arguments to FN and returns formatted
+output for BP-TEACH. all values should be of type `double-float'.
+</p>
+
+
+<p>
+<a name="make-output-from-input" id="make-output-from-input"></a>
+<a name="function-make-output-from-input" id="function-make-output-from-input"></a>
+</p>
+</li>
+</ul>
+</div>
+
+</div>
+
+<div id="outline-container-3-6" class="outline-3">
+<h3 id="sec-3-6"><span class="section-number-3">3.6</span> Function: <code>make-output-from-input</code></h3>
+<div class="outline-text-3" id="text-3-6">
+
+
+
+<ul>
+<li id="sec-3-6-1">Syntax<br/>
+
+
+
+
+<pre class="src src-lisp">(make-output-from-input fn input)
+</pre>
+
+
+
+</li>
+</ul>
+<ul>
+<li id="sec-3-6-2">Description<br/>
+
+
+<p>
+FN : function
+INPUT : list 
+</p>
+<p>
+utility function which apply INPUT to FN and returns formatted
+output for BP-TEACH.
+</p>
+
+
+<p>
+<a name="nodes-of" id="nodes-of"></a>
+<a name="function-nodes-of" id="function-nodes-of"></a>
+</p>
+</li>
+</ul>
+</div>
+
+</div>
+
+<div id="outline-container-3-7" class="outline-3">
+<h3 id="sec-3-7"><span class="section-number-3">3.7</span> Inherited Function: <code>nodes-of</code></h3>
+<div class="outline-text-3" id="text-3-7">
+
+
+
+<ul>
+<li id="sec-3-7-1">Syntax<br/>
+
+
+
+
+<pre class="src src-lisp">(nodes-of object)
+</pre>
+
+
+
+</li>
+</ul>
+<ul>
+<li id="sec-3-7-2">Description<br/>
+
+<p>
+Not documented.
+</p>
+
+
+<p>
+<a name="propagate" id="propagate"></a>
+<a name="function-propagate" id="function-propagate"></a>
+</p>
+</li>
+</ul>
+</div>
+
+</div>
+
+<div id="outline-container-3-8" class="outline-3">
+<h3 id="sec-3-8"><span class="section-number-3">3.8</span> Function: <code>propagate</code></h3>
+<div class="outline-text-3" id="text-3-8">
+
+
+
+<ul>
+<li id="sec-3-8-1">Syntax<br/>
+
+
+
+
+<pre class="src src-lisp">(propagate input nn)
+</pre>
+
+
+
+</li>
+</ul>
+<ul>
+<li id="sec-3-8-2">Description<br/>
+
+<p>
+Not documented.
+</p>
+
+
+<p>
+<a name="sigmoid" id="sigmoid"></a>
+<a name="function-sigmoid" id="function-sigmoid"></a>
+</p>
+</li>
+</ul>
+</div>
+
+</div>
+
+<div id="outline-container-3-9" class="outline-3">
+<h3 id="sec-3-9"><span class="section-number-3">3.9</span> Function: <code>sigmoid</code></h3>
+<div class="outline-text-3" id="text-3-9">
+
+
+
+<ul>
+<li id="sec-3-9-1">Syntax<br/>
+
+
+
+
+<pre class="src src-lisp">(sigmoid gain)
+</pre>
+
+
+
+</li>
+</ul>
+<ul>
+<li id="sec-3-9-2">Description<br/>
+
+<p>
+sigmoid function with gain
+</p>
+
+
+<p>
+<a name="sigmoid1" id="sigmoid1"></a>
+<a name="function-sigmoid1" id="function-sigmoid1"></a>
+</p>
+</li>
+</ul>
+</div>
+
+</div>
+
+<div id="outline-container-3-10" class="outline-3">
+<h3 id="sec-3-10"><span class="section-number-3">3.10</span> Function: <code>sigmoid1</code></h3>
+<div class="outline-text-3" id="text-3-10">
+
+
+
+<ul>
+<li id="sec-3-10-1">Syntax<br/>
+
+
+
+
+<pre class="src src-lisp">(sigmoid1 x)
+</pre>
+
+
+
+</li>
+</ul>
+<ul>
+<li id="sec-3-10-2">Description<br/>
+
+<p>
+Not documented.
+</p>
+
+
+<p>
+<a name="w-of" id="w-of"></a>
+<a name="function-w-of" id="function-w-of"></a>
+</p>
+</li>
+</ul>
+</div>
+
+</div>
+
+<div id="outline-container-3-11" class="outline-3">
+<h3 id="sec-3-11"><span class="section-number-3">3.11</span> Function: <code>w-of</code></h3>
+<div class="outline-text-3" id="text-3-11">
+
+
+
+<ul>
+<li id="sec-3-11-1">Syntax<br/>
+
+
+
+
+<pre class="src src-lisp">(w-of object)
+</pre>
+
+
+
+</li>
+</ul>
+<ul>
+<li id="sec-3-11-2">Description<br/>
+
+<p>
+Not documented.
+</p>
+
+
+<p>
+<a name="weight-of" id="weight-of"></a>
+<a name="function-weight-of" id="function-weight-of"></a>
+</p>
+</li>
+</ul>
+</div>
+
+</div>
+
+<div id="outline-container-3-12" class="outline-3">
+<h3 id="sec-3-12"><span class="section-number-3">3.12</span> Function: <code>weight-of</code></h3>
+<div class="outline-text-3" id="text-3-12">
+
+
+
+<ul>
+<li id="sec-3-12-1">Syntax<br/>
+
+
+
+
+<pre class="src src-lisp">(weight-of object)
+</pre>
+
+
+
+</li>
+</ul>
+<ul>
+<li id="sec-3-12-2">Description<br/>
+
+<p>
+Not documented.
+</p>
+
+
+
+
+</li>
+</ul>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> Colophon</h2>
+<div class="outline-text-2" id="text-4">
+
+
+<p>
+This documentation was generated from Common Lisp source code using CLOD, version 1.0.
+The latest version of CLOD is available <a href="http://bitbucket.org/eeeickythump/clod/">here</a>.
+</p></div>
+</div>
+</div>
+
+</body>
+</html>

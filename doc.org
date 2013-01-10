@@ -1,0 +1,452 @@
+#+TITLE: The CL-SIMPLE-NEURALNET package
+#+AUTHOR: CLOD
+#+EMAIL: your@email.here
+#+LINK: hs http://www.lispworks.com/reference/HyperSpec//%s
+#+STARTUP: showall
+#+OPTIONS: toc:2 H:2 @:t tags:nil
+
+# link target 2: <<cl-simple-neuralnet>>
+# link target: <<package cl-simple-neuralnet>>
+
+
+* Internal Package: =cl-simple-neuralnet=                                :package:
+
+- Uses:
+    [[package common-lisp][common-lisp]], [[package cl-simple-neuralnet.core][cl
+    simple-neuralnet.core]]
+- Used by:
+    None.
+
+* External Symbols
+** Class: =neural-network=					      :class:
+
+
+*** Inheritance
+
+- Parent classes:
+    [[class standard-object][standard-object]]
+- Precedence list:
+    [[class neural-network][neural-network]], [[class standard-object][standard
+    object]], [[class slot-object][slot-object]], [[class t][t]]
+- Direct subclasses:
+    None.
+
+
+*** Description
+
+Not documented.
+
+
+*** Direct Slots
+
+# link target 2: <<nodes>>
+# link target: <<slot nodes>>
+
+
+**** Slot: =nodes=						       :slot:
+
+- Value type: =array=
+- Initial value: =#(2 10 1)=
+- Initargs: nodes
+- Allocation: instance
+
+
+***** Accessors
+
+# link target 2: <<nodes-of>>
+# link target: <<slot-accessor nodes-of>>
+
+
+****** Inherited Slot Accessor: =nodes-of=		      :reader:writer:
+
+
+******* Syntax
+
+#+BEGIN_SRC lisp
+(nodes-of object)
+#+END_SRC
+
+
+******* Methods
+
+
+******** Method: Nodes-Of(#<Standard-Class Cl-Simple-Neuralnet.Core:Neural-Network>)
+
+
+
+
+
+
+
+# link target 2: <<w>>
+# link target: <<slot w>>
+
+
+**** Slot: =w=							       :slot:
+
+- Value type: =array=
+- Initial value: =NIL=
+- Initargs: none
+- Allocation: instance
+
+
+***** Accessors
+
+# link target 2: <<weight-of>>
+# link target: <<slot-accessor weight-of>>
+
+
+****** Slot Accessor: =weight-of=			      :reader:writer:
+
+
+******* Syntax
+
+#+BEGIN_SRC lisp
+(weight-of object)
+#+END_SRC
+
+
+******* Methods
+
+
+******** Method: Weight-Of(#<Standard-Class Cl-Simple-Neuralnet.Core:Neural-Network>)
+
+
+
+
+
+# link target 2: <<w-of>>
+# link target: <<slot-accessor w-of>>
+
+
+****** Slot Accessor: =w-of=				      :reader:writer:
+
+
+******* Syntax
+
+#+BEGIN_SRC lisp
+(w-of object)
+#+END_SRC
+
+
+******* Methods
+
+
+******** Method: W-Of(#<Standard-Class Cl-Simple-Neuralnet.Core:Neural-Network>)
+
+
+
+
+
+
+
+
+
+
+
+** Variable: =*initial-randomization-weight-range*=		   :variable:
+
+
+*** Value
+
+: 0.1d0
+
+Type: =double-float=
+
+
+*** Description
+
+determines the randomization limit of initial weight value
+of the newtwork. the weight ranges from -0.1 to 0.1 by default.
+
+
+
+# link target 2: <<..2b..η..2b..>>
+# link target: <<variable ..2b..η..2b..>>
+
+** Variable: =+η+=						   :variable:
+
+
+*** Value
+
+: 0.08d0
+
+Type: =double-float=
+
+
+*** Description
+
+the parameter for steepest descent method. Each iteration in BP
+ algorithm, this parameter works as the factor which slower the speed 
+of learning, therefore contributes to preventing the divergence 
+in lerning.
+
+
+
+
+* External Functions
+** Function: =back-propagate=					   :function:
+
+
+*** Syntax
+
+#+BEGIN_SRC lisp
+(back-propagate x z0 nn)
+#+END_SRC
+
+
+*** Description
+
+modifies the weights between each nodes of
+neural-network by means of back propagation algorithm. X is the
+imput, Z0 is the teacher signal and NN is the neural-network to be
+modified.
+
+
+
+# link target 2: <<bp-teach>>
+# link target: <<function bp-teach>>
+
+** Function: =bp-teach=						   :function:
+
+
+*** Syntax
+
+#+BEGIN_SRC lisp
+(bp-teach fn nodes &key (iteration 10000) nn)
+#+END_SRC
+
+
+*** Description
+
+
+bp-teach (fn, nodes, &key iteration, nn) -> nn
+
+FN : the target function. ( input-arguments* -> output-arguments* )
+ITERATION : a `fixnum'
+NODES : ({ number-of-nodes-in-layer }*)
+NUMBER-OF-NODES-IN-LAYER : a `fixnum'
+NN : an instance of `neural-network'
+
+let I = [0.0d0,1.0d0] .
+function FN should accept n `double-float' arguments within I
+and is expected to return m `double-float' arguments values.
+n should match the first `fixnum' in the NODES , and m should
+match the last `fixnum' in the NODES.
+
+if NN is unspecified, NODES argument is used to create 
+a new instance of `neural-network'
+otherwise, NODES will be ignored and it will
+conduct further teaching on NN.
+
+ITERATION determines iteration number of
+ back-propagation algorhithm, defaulted to 10000.
+
+
+
+# link target 2: <<j-at>>
+# link target: <<function j-at>>
+
+** Function: =j-at=						   :function:
+
+
+*** Syntax
+
+#+BEGIN_SRC lisp
+(j-at x z0 nn &aux (z? (propagate x nn)))
+#+END_SRC
+
+
+*** Description
+
+Not documented.
+
+
+
+# link target 2: <<make-input>>
+# link target: <<function make-input>>
+
+** Function: =make-input=					   :function:
+
+
+*** Syntax
+
+#+BEGIN_SRC lisp
+(make-input &rest args)
+#+END_SRC
+
+
+*** Description
+
+a utility function which creates correct input for BP-TEACH.
+all values should be of type `double-float'
+
+
+
+# link target 2: <<make-output>>
+# link target: <<function make-output>>
+
+** Function: =make-output=					   :function:
+
+
+*** Syntax
+
+#+BEGIN_SRC lisp
+(make-output fn &rest args)
+#+END_SRC
+
+
+*** Description
+
+
+FN : function
+
+utility function which apply its arguments to FN and returns formatted
+output for BP-TEACH. all values should be of type `double-float'.
+
+
+
+# link target 2: <<make-output-from-input>>
+# link target: <<function make-output-from-input>>
+
+** Function: =make-output-from-input=				   :function:
+
+
+*** Syntax
+
+#+BEGIN_SRC lisp
+(make-output-from-input fn input)
+#+END_SRC
+
+
+*** Description
+
+
+FN : function
+INPUT : list 
+
+utility function which apply INPUT to FN and returns formatted
+output for BP-TEACH.
+
+
+
+# link target 2: <<nodes-of>>
+# link target: <<function nodes-of>>
+
+** Inherited Function: =nodes-of=				   :function:
+
+
+*** Syntax
+
+#+BEGIN_SRC lisp
+(nodes-of object)
+#+END_SRC
+
+
+*** Description
+
+Not documented.
+
+
+
+# link target 2: <<propagate>>
+# link target: <<function propagate>>
+
+** Function: =propagate=					   :function:
+
+
+*** Syntax
+
+#+BEGIN_SRC lisp
+(propagate input nn)
+#+END_SRC
+
+
+*** Description
+
+Not documented.
+
+
+
+# link target 2: <<sigmoid>>
+# link target: <<function sigmoid>>
+
+** Function: =sigmoid=						   :function:
+
+
+*** Syntax
+
+#+BEGIN_SRC lisp
+(sigmoid gain)
+#+END_SRC
+
+
+*** Description
+
+sigmoid function with gain
+
+
+
+# link target 2: <<sigmoid1>>
+# link target: <<function sigmoid1>>
+
+** Function: =sigmoid1=						   :function:
+
+
+*** Syntax
+
+#+BEGIN_SRC lisp
+(sigmoid1 x)
+#+END_SRC
+
+
+*** Description
+
+Not documented.
+
+
+
+# link target 2: <<w-of>>
+# link target: <<function w-of>>
+
+** Function: =w-of=						   :function:
+
+
+*** Syntax
+
+#+BEGIN_SRC lisp
+(w-of object)
+#+END_SRC
+
+
+*** Description
+
+Not documented.
+
+
+
+# link target 2: <<weight-of>>
+# link target: <<function weight-of>>
+
+** Function: =weight-of=					   :function:
+
+
+*** Syntax
+
+#+BEGIN_SRC lisp
+(weight-of object)
+#+END_SRC
+
+
+*** Description
+
+Not documented.
+
+
+
+
+
+* Colophon
+
+This documentation was generated from Common Lisp source code using CLOD, version 1.0.
+The latest version of CLOD is available [[http://bitbucket.org/eeeickythump/clod/][here]].

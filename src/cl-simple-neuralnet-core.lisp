@@ -4,7 +4,7 @@
 |#
 
 (in-package :cl-user)
-(defpackage cl-simple-neuralnet
+(defpackage cl-simple-neuralnet.core
   (:use :cl
 		:iterate
 		:annot
@@ -12,13 +12,14 @@
 		:annot.class
 		:cl-simple-neuralnet.utilities)
   (:import-from :alexandria :copy-array))
-(in-package :cl-simple-neuralnet)
+(in-package :cl-simple-neuralnet.core)
 
 (annot:enable-annot-syntax)
 
 (declaim (optimize (debug 3)))
 
 @export
+@doc "sigmoid function with gain"
 (defun sigmoid (gain)
   @type *desired-type* gain
   (lambda (x)
@@ -54,6 +55,8 @@
   (make-array (list (1+ n1) n2) :element-type '*desired-type*))
 
 @export
+@doc "determines the randomization limit of initial weight value
+of the newtwork. the weight ranges from -0.1 to 0.1 by default."
 (defparameter *initial-randomization-weight-range* 1.0d-1)
 
 (defmethod initialize-instance :after ((nn neural-network) &rest args)
@@ -117,7 +120,10 @@
 		  (finally (return ys)))))
 
 @export
-@doc "the parameter for steepest descent method."
+@doc "the parameter for steepest descent method. Each iteration in BP
+ algorithm, this parameter works as the factor which slower the speed 
+of learning, therefore contributes to preventing the divergence 
+in lerning."
 (defparameter +η+ 8.0d-2)
 
 @export
@@ -157,7 +163,10 @@
 	 (setf δ-1 δ)
 	 (collecting δ))))
 
-@export
+@export @doc "modifies the weights between each nodes of
+neural-network by means of back propagation algorithm. X is the
+imput, Z0 is the teacher signal and NN is the neural-network to be
+modified."
 (defun back-propagate (x z0 nn)
   (with-slots (w nodes) nn
 	(iter
@@ -179,14 +188,27 @@
 			  (d* +η+ (aref δn j) 1.0d0))))))
 
 @export
+@doc "a utility function which creates correct input for BP-TEACH.
+all values should be of type `double-float'"
 (defun make-input (&rest args)
   (coerce args '(array *desired-type* 1)))
 
 @export
+@doc "
+FN : function
+
+utility function which apply its arguments to FN and returns formatted
+output for BP-TEACH. all values should be of type `double-float'."
 (defun make-output (fn &rest args)
   (multiple-value-list (apply fn args)))
 
 @export
+@doc "
+FN : function
+INPUT : list 
+
+utility function which apply INPUT to FN and returns formatted
+output for BP-TEACH."
 (defun make-output-from-input (fn input)
   (multiple-value-list (apply fn (coerce input 'list))))
 
@@ -195,24 +217,24 @@
 @doc "
 bp-teach (fn, nodes, &key iteration, nn) -> nn
 
-`fn' : the target function. input-arguments* -> output-arguments*
-`iteration' : a `fixnum'
-`nodes' : ({ number-of-nodes-in-layer }*)
-`number-of-nodes-in-layer' : a `fixnum'
-`nn' : an instance of `neural-network'
+FN : the target function. ( input-arguments* -> output-arguments* )
+ITERATION : a `fixnum'
+NODES : ({ number-of-nodes-in-layer }*)
+NUMBER-OF-NODES-IN-LAYER : a `fixnum'
+NN : an instance of `neural-network'
 
 let I = [0.0d0,1.0d0] .
-function `fn' should accept n `double-float' arguments within I
+function FN should accept n `double-float' arguments within I
 and is expected to return m `double-float' arguments values.
-n should match the first `fixnum' in the `nodes' , and m should
-match the last `fixnum' in the `nodes'.
+n should match the first `fixnum' in the NODES , and m should
+match the last `fixnum' in the NODES.
 
-if `nn' is unspecified, `nodes' argument is used to create 
+if NN is unspecified, NODES argument is used to create 
 a new instance of `neural-network'
-otherwise, `nodes' will be ignored and it will
-conduct further teaching on `nn'.
+otherwise, NODES will be ignored and it will
+conduct further teaching on NN.
 
-`iteration' determines iteration number of
+ITERATION determines iteration number of
  back-propagation algorhithm, defaulted to 10000.
 "
 (defun bp-teach (fn nodes
