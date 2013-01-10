@@ -5,7 +5,7 @@
 
 
 (in-package :cl-user)
-(defpackage cl-simple-neuralnet
+(defpackage cl-simple-neuralnet.core
   (:use :cl
 		:iterate
 		:annot
@@ -13,11 +13,21 @@
 		:annot.class
 		:cl-simple-neuralnet.utilities)
   (:import-from :alexandria :copy-array))
-(in-package :cl-simple-neuralnet)
+(in-package :cl-simple-neuralnet.core)
 
 (annot:enable-annot-syntax)
 
-(declaim (optimize (debug 3)))
+;; (declaim (optimize (debug 3)))
+
+(declaim (optimize (debug 0) (space 0) (safety 0) (speed 3)))
+
+@export
+(defparameter *initial-randomization-weight-range* 0.1d0)
+
+@export
+@doc "the parameter for steepest descent method."
+(defparameter +η+ 1.00d-2)
+
 
 @export
 (defun sigmoid (gain)
@@ -53,9 +63,6 @@
 
 (defun make-weight (n1 n2)
   (make-array (list (1+ n1) n2) :element-type '*desired-type*))
-
-@export
-(defparameter *initial-randomization-weight-range* 1.0d-1)
 
 (defmethod initialize-instance :after ((nn neural-network) &rest args)
   @ignore args
@@ -107,6 +114,7 @@
   (reduce #'+ (map 'vector #'sqdiff z? z0)))
 
 @export
+@doc "入力層以外のノードの出力をすべてあつめて返す。すなわちn=2から"
 (defun layer-status-after-propagation (input nn)
   (with-slots (w nodes) nn
 	(iter (with len = (length nodes))
@@ -117,12 +125,10 @@
 		  (vector-push output ys)
 		  (finally (return ys)))))
 
-@export
-@doc "the parameter for steepest descent method."
-(defparameter +η+ 8.0d-2)
 
 @export
 (defun mostout-δ (z z0)
+  ;; (assert (= (length z) (length z0)))
   (map 'vector
 	   (lambda (zk tk)
 		 (d* (d- tk zk)
@@ -131,32 +137,45 @@
 
 @export
 (defun hidden-δ (out w δ-1)
+  ;; out :: 一つ前の層の出力
+  ;; δ-1 :: 一つ次の層の誤差項
+  ;; (assert (= (array-dimension w 1) (length δ-1)))
+  ;; (assert (= (1- (array-dimension w 0)) (length out))) ;; つねに1のノードがあるため
   (iter 
-	(with dim-1 = (1- (array-dimension w 0)))
-	(with δ = (make-array dim-1))
+	(with δ = (make-array (1- (array-dimension w 0))))
+	;; (assert (= (1- (array-dimension w 0)) (length δ)))
 	(for oj in-vector out with-index j)
-		(setf (aref δ j)
-			  (d* (iter 
-					(for δ-1k in-vector δ-1 with-index k)
-					(summing (d* (aref w j k) δ-1k)))
-				  oj (d- 1.0d0 oj)))
-		(finally (return δ))))
+	(setf (aref δ j)
+		  (d* (iter 
+				(for δ-1k in-vector δ-1 with-index k)
+				(summing (d* (aref w j k) δ-1k)))
+			  oj (d- 1.0d0 oj)))
+	(finally (return δ))))
 
 @export
 (defun generate-all-δ (w o z0)
-  (nreverse
-   (iter
-	 (with δ-1 = (mostout-δ
-				   (aref o (1- (length o)))
-				   z0))
-	 (for on
-		  in-vector o
-		  with-index n		;nth layer
-		  downfrom (- (length o) 2))
-	 (for wn in-vector w downto 0)
-	 (for δ = (hidden-δ on wn δ-1))
-	 (setf δ-1 δ)
-	 (collecting δ))))
+  ;; o :: すべての出力層, inputは含まず.
+  ;; w :: すべての重み
+  ;; z0 :: 一番後の教師信号
+  (iter
+	(with δ =
+		  (make-array (length o)))
+	(with mostout =
+		  (mostout-δ (aref o (1- (length o))) z0))
+	(initially
+	 (setf (aref δ (1- (length o))) mostout))
+	
+	;; (assert (= (length w) (length o) (length δ)))
+	(for n from (- (length o) 2) downto 0)
+	(for on = (aref o n))
+	(for wn = (aref w (1+ n)))
+	
+	(for δn-1 previous δn)
+	(for δn
+		 first (hidden-δ on wn mostout)
+		 then  (hidden-δ on wn δn-1))
+	(setf (aref δ n) δn)
+	(finally (return δ))))
 
 @export
 (defun back-propagate (x z0 nn)
@@ -164,16 +183,23 @@
 	(iter
 	  (with o = (layer-status-after-propagation x nn))
 	  (with δ = (generate-all-δ w o z0))
-	  (for δn in δ)
+
+	  (for δn   in-vector δ with-index n)
+	  (for wn   in-vector w)
 	  (for on-1 in-vector o)
-	  (for wn in-vector w with-index n)
+
 	  (for (im jm) = (array-dimensions wn))
+	  ;; (assert (= (length w) (length o) (length δ)))
+	  ;; (break "~@{~a ~}" (length w) (length o) (length δ) n)
+	  ;; (break "~@{~a ~}" im jm (array-dimensions wn) (length on-1) (length δn))
+	  ;; (assert (= jm (length on-1)) nil "~@{~a ~}" '(= jm (length on-1)) jm (length on-1))
+	  ;; (assert (= jm (length δn)) nil "~@{~a ~}" '(= jm (length δn)) jm (length δn))
 	  (iter
 		(for i below (1- im))
 		(iter
 		  (for j below jm)
 		  (incf (aref wn i j)
-				(d* +η+ (aref δn j) (aref on-1 i)))))
+				(d* +η+ (aref δn j) (aref on-1 j)))))
 	  (iter
 		(for j below jm)
 		(incf (aref wn (1- im) j)

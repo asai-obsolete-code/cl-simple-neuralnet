@@ -6,7 +6,7 @@ Copyright (c) 2012 Masataro Asai (guicho2.71828@gmail.com)
 (in-package :cl-user)
 (defpackage cl-simple-neuralnet-test
   (:use :cl
-        :cl-simple-neuralnet
+        :cl-simple-neuralnet.core
 		:cl-simple-neuralnet.utilities
 		:annot
 		:iterate
@@ -14,6 +14,8 @@ Copyright (c) 2012 Masataro Asai (guicho2.71828@gmail.com)
         :cl-test-more)
   (:shadow :terminate))
 (in-package :cl-simple-neuralnet-test)
+
+(declaim (optimize (debug 0) (space 0) (safety 0) (speed 3)))
 
 (annot:enable-annot-syntax)
 
@@ -55,38 +57,47 @@ Copyright (c) 2012 Masataro Asai (guicho2.71828@gmail.com)
 				(fill-path)))
 	(save-png path)))
 
+(defun read-new-value ()
+  (format t "Enter a new value: ")
+  (multiple-value-list (eval (read))))
+
 (defun bp-test (fn &optional (name "bp"))
-  (let* ((nn (make-instance 'neural-network)))
+  (let* ((nn (make-instance 'neural-network :nodes #(2 10 1))))
 	(diag "~%w before leaning:~%~a"(w-of nn))
-	(iter (with print-par = 200000)
-		  (for i from 0 to 10)
-		  (for x0 = (drandom 1.0d0))
-		  (for y0 = (drandom 1.0d0))
-		  (for x = (make-input x0 y0))
-		  (for z0 = (make-output fn x0 y0))
-		  (for before = (j-at x z0 nn))
-		  (back-propagate x z0 nn)
-		  (for after = (j-at x z0 nn))
+	(iter (with print-par = 130000)
+		  (for total from 0)
+		  (for i from 3 downto 0)
+		  (iter (repeat print-par)
+				(for x = (make-input (drandom 1.0d0)
+									 (drandom 1.0d0)))
+				(back-propagate
+				 x (make-output-from-input fn x) nn))
+		  
+		  (for j = 
+			   (/ (iter (repeat 100)
+				   (for x = (make-input (drandom 1.0d0)
+										(drandom 1.0d0)))
+				   (summing
+					(j-at x (make-output-from-input fn x) nn)))
+					 100))
+		  (for jj previous j)
 		  (format t
-				  "~%~ath bp:f(~3f, ~3f)=~3f true:~{~3f~} J=~6f dJ=~6f"
-				  (* i print-par) x0 y0
-				  (propagate (make-input x0 y0) nn)
-				  z0 after (d- after before))
-		  (iter (repeat (1- print-par))
-				(for x0 = (drandom 1.0d0))
-				(for y0 = (drandom 1.0d0))
-				(for x = (make-input x0 y0))
-				(for z0 = (make-output fn x0 y0))
-				(back-propagate x z0 nn)))
-	(diag "~%w after leaning:~%~a" (w-of nn))
-	
-	(format t "~%drawing the learned function...")
-	(write-func-to-png
-	 (lambda (x0 y0)
-	   (aref (propagate (make-input x0 y0) nn) 0))
-	 (concatenate 'string name ".png"))
-	(format t "~%drawing the original function...~%")
-	(write-func-to-png fn (concatenate 'string name "-ans.png"))))
+				  "~%~ath bp: average J=~6f dJ=~6f"
+				  (* total print-par) j (when jj (- j jj)))
+		  (restart-case
+			  (when (= i 1)
+				(diag "~%w after leaning:~%~a" (w-of nn))
+				(format t "~%drawing the learned function...")
+				(write-func-to-png
+				 (lambda (x0 y0)
+				   (aref (propagate (make-input x0 y0) nn) 0))
+				 (concatenate 'string name ".png"))
+				(format t "~%drawing the original function...~%")
+				(write-func-to-png fn (concatenate 'string name "-ans.png"))
+				(error "iteration finished. what do you do?"))
+			(add-iteration (new-i)
+			  :interactive read-new-value
+			  (setf i new-i))))))
 
 (plan nil)
 (deftest sigmoid1
