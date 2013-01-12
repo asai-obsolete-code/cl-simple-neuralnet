@@ -1,0 +1,9 @@
+@findex make-output
+@anchor{Function make-output}
+@deffn {Function} {make-output}
+
+@code{fn} @code{:} function
+
+utility function which apply its arguments to @code{fn} and returns formatted
+output for @code{bp-teach}. all values should be of type =double-float=.
+@end deffn

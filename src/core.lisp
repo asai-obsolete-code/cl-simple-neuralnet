@@ -51,6 +51,10 @@
 
 @export
 @export-accessors
+@doc "neural network class. Slot NODES (with accessor NODES-OF) is a vector
+ array which contains the number of nodes in each layer, in the same order as
+the forward propagation. slot W, with accessor WEIGHT-OF, holds the weight
+ which will be used in the propagation and modified in the back-propagation."
 (defclass neural-network ()
   ((nodes :type (array fixnum (*))
 		  :initform #(2 10 1)

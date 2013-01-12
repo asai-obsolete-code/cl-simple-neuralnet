@@ -1,0 +1,35 @@
+@findex bp-teach
+@anchor{Function bp-teach}
+@deffn {Function} {bp-teach}
+
+bp-teach (fn, nodes, &key iteration, nn) @code{->} nn
+
+@code{fn} @code{:} the target function. @code{( input-arguments* -> output-arguments* )}
+
+@code{iteration} @code{:} a =fixnum=
+
+@code{nodes} @code{:} (@{ number-of-nodes-in-layer @}*)
+
+@code{number-of-nodes-in-layer} @code{:} a =fixnum=
+
+@code{nn} @code{:} an instance of =neural-network=
+
+let I @code{=} [0.0d0,1.0d0] .
+function @code{fn} should accept n =double-float= arguments within I
+and is expected to return m =double-float= values also within I.
+n should match the first =fixnum= in the @code{nodes} , and m should
+match the last =fixnum= in the @code{nodes}.
+
+if @code{nn} is unspecified, @code{nodes} argument is used to create 
+a new instance of =neural-network=
+otherwise, @code{nodes} will be ignored and it will
+conduct further teaching on @code{nn}.
+
+@code{iteration} determines iteration number of
+ back-propagation algorhithm, defaulted to 10000.
+
+restarts:
+
+@code{+} /Restart/ add-iteration (new-i)
+
+@end deffn

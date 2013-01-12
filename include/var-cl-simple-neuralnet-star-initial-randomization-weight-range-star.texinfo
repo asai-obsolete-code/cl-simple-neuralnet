@@ -1,0 +1,5 @@
+@vindex @earmuffs{initial-randomization-weight-range}
+@anchor{Variable *initial-randomization-weight-range*}
+@defvr {Variable} {@earmuffs{initial-randomization-weight-range}}
+as the name says.
+@end defvr

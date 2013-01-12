@@ -1,0 +1,6 @@
+@findex make-input
+@anchor{Function make-input}
+@deffn {Function} {make-input}
+a utility function which creates correct input for @code{bp-teach}.
+all values should be of type =double-float=
+@end deffn

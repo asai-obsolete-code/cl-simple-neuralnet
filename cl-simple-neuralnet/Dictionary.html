@@ -1,0 +1,120 @@
+<html lang="en">
+<head>
+<title>Dictionary - Cl-Simple-Neuralnet</title>
+<meta http-equiv="Content-Type" content="text/html">
+<meta name="description" content="Cl-Simple-Neuralnet">
+<meta name="generator" content="makeinfo 4.13">
+<link title="Top" rel="start" href="index.html#Top">
+<link rel="prev" href="index.html#Top" title="Top">
+<link rel="next" href="Function-Index.html#Function-Index" title="Function Index">
+<link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<style type="text/css"><!--
+  pre.display { font-family:inherit }
+  pre.format  { font-family:inherit }
+  pre.smalldisplay { font-family:inherit; font-size:smaller }
+  pre.smallformat  { font-family:inherit; font-size:smaller }
+  pre.smallexample { font-size:smaller }
+  pre.smalllisp    { font-size:smaller }
+  span.sc    { font-variant:small-caps }
+  span.roman { font-family:serif; font-weight:normal; } 
+  span.sansserif { font-family:sans-serif; font-weight:normal; } 
+--></style>
+</head>
+<body>
+<div class="node">
+<a name="Dictionary"></a>
+<p>
+Next:&nbsp;<a rel="next" accesskey="n" href="Function-Index.html#Function-Index">Function Index</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="index.html#Top">Top</a>,
+Up:&nbsp;<a rel="up" accesskey="u" href="index.html#Top">Top</a>
+<hr>
+</div>
+
+<!-- node-name,  next,  previous,  up -->
+<h2 class="chapter">1 Dictionary</h2>
+
+<p><a name="index-neural_002dnetwork-1"></a><a name="Class-neural_002dnetwork"></a>
+
+<div class="defun">
+&mdash; Class: <b>neural-network</b><var><a name="index-neural_002dnetwork-2"></a></var><br>
+<blockquote><p>Class precedence list: <code>neural-network, standard-object, t</code>
+
+        <p>neural network class. Slot <code>nodes</code> (with accessor NODES-OF) is a vector
+ array which contains the number of nodes in each layer, in the same order as
+the forward propagation. slot <code>w</code>, with accessor <code>weight-of</code>, holds the weight
+ which will be used in the propagation and modified in the back-propagation. 
+</p></blockquote></div>
+
+   <p><a name="index-g_t_0040earmuffs_007binitial_002drandomization_002dweight_002drange_007d-3"></a><a name="Variable-_002ainitial_002drandomization_002dweight_002drange_002a"></a>
+
+<div class="defun">
+&mdash; Variable: <b>*initial-randomization-weight-range*</b><var><a name="index-g_t_0040earmuffs_007binitial_002drandomization_002dweight_002drange_007d-4"></a></var><br>
+<blockquote><p>as the name says. 
+</p></blockquote></div>
+
+   <p><a name="index-g_t_002b_00ce_00b7_002b-5"></a><a name="Variable-_002b_00ce_00b7_002b"></a>
+
+<div class="defun">
+&mdash; Variable: <b>+η+</b><var><a name="index-g_t_002b_00ce_00b7_002b-6"></a></var><br>
+<blockquote><p>the parameter for steepest descent method. 
+</p></blockquote></div>
+
+   <p><a name="index-bp_002dteach-7"></a><a name="Function-bp_002dteach"></a>
+
+<div class="defun">
+&mdash; Function: <b>bp-teach</b><var><a name="index-bp_002dteach-8"></a></var><br>
+<blockquote>
+        <p>bp-teach (fn, nodes, &amp;key iteration, nn) <code>-&gt;</code> nn
+
+        <p><code>fn</code> <code>:</code> the target function. <code>( input-arguments* -&gt; output-arguments* )</code>
+
+        <p><code>iteration</code> <code>:</code> a =fixnum=
+
+        <p><code>nodes</code> <code>:</code> ({ number-of-nodes-in-layer }*)
+
+        <p><code>number-of-nodes-in-layer</code> <code>:</code> a =fixnum=
+
+        <p><code>nn</code> <code>:</code> an instance of =neural-network=
+
+        <p>let I <code>=</code> [0.0d0,1.0d0] . 
+function <code>fn</code> should accept n =double-float= arguments within I
+and is expected to return m =double-float= values also within I. 
+n should match the first =fixnum= in the <code>nodes</code> , and m should
+match the last =fixnum= in the <code>nodes</code>.
+
+        <p>if <code>nn</code> is unspecified, <code>nodes</code> argument is used to create
+a new instance of =neural-network=
+otherwise, <code>nodes</code> will be ignored and it will
+conduct further teaching on <code>nn</code>.
+
+        <p><code>iteration</code> determines iteration number of
+ back-propagation algorhithm, defaulted to 10000.
+
+        <p>restarts:
+
+        <p><code>+</code> /Restart/ add-iteration (new-i)
+
+        </blockquote></div>
+
+   <p><a name="index-make_002dinput-9"></a><a name="Function-make_002dinput"></a>
+
+<div class="defun">
+&mdash; Function: <b>make-input</b><var><a name="index-make_002dinput-10"></a></var><br>
+<blockquote><p>a utility function which creates correct input for <code>bp-teach</code>. 
+all values should be of type =double-float=
+</p></blockquote></div>
+
+   <p><a name="index-make_002doutput-11"></a><a name="Function-make_002doutput"></a>
+
+<div class="defun">
+&mdash; Function: <b>make-output</b><var><a name="index-make_002doutput-12"></a></var><br>
+<blockquote>
+        <p><code>fn</code> <code>:</code> function
+
+        <p>utility function which apply its arguments to <code>fn</code> and returns formatted
+output for <code>bp-teach</code>. all values should be of type =double-float=. 
+</p></blockquote></div>
+
+   </body></html>
+

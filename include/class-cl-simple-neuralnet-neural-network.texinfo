@@ -1,0 +1,10 @@
+@tindex neural-network
+@anchor{Class neural-network}
+@deftp {Class} {neural-network}
+Class precedence list: @code{@lw{neural-network}, @lw{standard-object}, @lw{t}}
+
+neural network class. Slot @code{nodes} (with accessor NODES-OF) is a vector
+ array which contains the number of nodes in each layer, in the same order as
+the forward propagation. slot @code{w}, with accessor @code{weight-of}, holds the weight
+ which will be used in the propagation and modified in the back-propagation.
+@end deftp

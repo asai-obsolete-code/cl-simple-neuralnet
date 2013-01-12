@@ -23,7 +23,8 @@
 				:serial t
                 :components
                 ((:file "typed-ops")
-				 (:file "core"))))
+				 (:file "core")
+				 (:file :package))))
   :description "a simple implementation of multiple-layered neural network."
   :long-description
   #.(with-open-file (stream (merge-pathnames

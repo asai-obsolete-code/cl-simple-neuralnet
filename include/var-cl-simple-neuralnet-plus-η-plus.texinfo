@@ -1,0 +1,5 @@
+@vindex +η+
+@anchor{Variable +η+}
+@defvr {Variable} {+η+}
+the parameter for steepest descent method.
+@end defvr
